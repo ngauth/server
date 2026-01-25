@@ -1,0 +1,36 @@
+- This is implementation of oauth 2.0 server as defined in [rfc6749](https://www.rfc-editor.org/rfc/rfc6749.txt) and [rfc8414](https://www.rfc-editor.org/rfc/rfc8414.txt).
+- It is a minimalistic implementation that implements most common use cases, suitable for testing code that depends on oauth servers
+- It can be simply deployed as a docker container along with other service that depend on oauth server.
+- The data directory can be configured via environment variable NGAUTH_DATA
+- The private key for the server can be supplied via NGAUTH_KEY
+- The project uses node.js with express.
+- Coding style is Standard JS, using standard package.
+- Always use stanard fix before commiting and pushing code.
+- Code should be minimalistic, fail-fast, rely on errors rather than on excessive condition checks.
+- It uses JWT for authentication tokens
+- It supports scopes
+- It supports client credentials
+- jwks is served at /.well-known/jwks.json
+- simple html support at /authorize endpoint
+- Docker container can run without any configuration, in which case it generates and persists a newly generated key in NGAUTH_DATA directory.
+- Supported features:
+  - TToken Endpoint (/token) - §3.2
+  - Client Authentication at token endpoint - §3.2.1
+  - Authorization Code Grant - §4.1 (at minimum one grant type required)
+  - Error Responses with error codes (invalid_request, invalid_client, invalid_grant, unauthorized_client, unsupported_grant_type, invalid_scope) - §5.2
+  - TLS for authorization and token endpoints - §3.1, §3.2 - via reverse proxy / TLS termination on edge
+  - Access Token Response with token_type, expires_in, access_token - §5.1
+  - Client Identifier (client_id) - §2.2
+  - Client Secret confidentiality for confidential clients - §2.3.1
+  - Redirect URI validation - §3.1.2.2, §3.1.2.3
+  - Authorization Code must be short-lived (max 10 minutes recommended) - §4.1.2
+  - Authorization Code single-use only - §4.1.2
+  - State Parameter validation when provided by client - §4.1.1, §10.12
+  - Metadata Endpoint (/.well-known/oauth-authorization-server) - §3
+  - issuer metadata field - §2
+  - authorization_endpoint metadata field (if supporting authorization code grant) - §2
+  - token_endpoint metadata field - §2
+  - response_types_supported metadata field - §2
+  - Metadata served over TLS - §3 - via reverse proxy
+  - Multiple redirect URIs per client - §3.1.2.2
+  - Dynamic Client Registration (RFC 7591)
