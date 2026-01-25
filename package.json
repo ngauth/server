@@ -1,0 +1,49 @@
+{
+  "name": "ngauth",
+  "version": "1.0.0",
+  "description": "Minimalistic OAuth 2.0 server (RFC 6749 & RFC 8414)",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "jest",
+    "test:unit": "jest test/unit",
+    "test:integration": "jest test/integration",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "standard",
+    "lint:fix": "standard --fix"
+  },
+  "keywords": [
+    "oauth",
+    "oauth2",
+    "authorization",
+    "server",
+    "jwt"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "standard": "^17.1.0",
+    "supertest": "^7.2.2"
+  },
+  "standard": {
+    "rules": {
+      "camelcase": "off"
+    }
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ]
+  }
+}

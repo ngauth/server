@@ -34,3 +34,5 @@
   - Metadata served over TLS - §3 - via reverse proxy
   - Multiple redirect URIs per client - §3.1.2.2
   - Dynamic Client Registration (RFC 7591)
+- code structure: src for source files, test for test files
+- unit testing framework: jest
