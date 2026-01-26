@@ -6,20 +6,22 @@ const helmet = require('helmet')
 const crypto = require('crypto')
 const fs = require('fs').promises
 const path = require('path')
-const { initDb } = require('./db')
+const { initDb, cleanupExpiredCodes } = require('./db')
 const { ensurePrivateKey, getPublicKeyPem } = require('./tokens')
 const { setPublicKey } = require('./auth')
 const { auditMiddleware, initAuditLog } = require('./middleware/auditLog')
+const { loginLimiter, registerLimiter } = require('./middleware/rateLimit')
 const wellKnownRouter = require('./routes/well-known')
 const jwksRouter = require('./routes/jwks')
 const authorizeRouter = require('./routes/authorize')
 const tokenRouter = require('./routes/token')
 const registerRouter = require('./routes/register')
+const userinfoRouter = require('./routes/userinfo')
 const usersRouter = require('./routes/users')
 const { errorHandler } = require('./errors')
 
 const PORT = process.env.PORT || 3000
-const NGAUTH_DATA = process.env.NGAUTH_DATA || '/data'
+const NGAUTH_DATA = process.env.NGAUTH_DATA || './data'
 
 const app = express()
 
@@ -47,6 +49,16 @@ async function initialize () {
 
   // Initialize database
   await initDb(NGAUTH_DATA)
+
+  // Cleanup expired authorization codes on startup (skip in test environment)
+  if (process.env.NODE_ENV !== 'test') {
+    try {
+      await cleanupExpiredCodes()
+      console.log('Cleaned up expired authorization codes')
+    } catch (err) {
+      console.warn('Failed to cleanup expired codes:', err.message)
+    }
+  }
 }
 
 // Validate private key file has secure permissions
@@ -103,7 +115,7 @@ app.use(session({
 // CSRF protection (only for HTML forms, skip API routes)
 app.use((req, res, next) => {
   // Skip CSRF for API routes (they use Bearer tokens)
-  if (req.path.startsWith('/token') || req.path.startsWith('/users') || req.path.startsWith('/.well-known') || req.path.startsWith('/register')) {
+  if (req.path.startsWith('/token') || req.path.startsWith('/userinfo') || req.path.startsWith('/users') || req.path.startsWith('/.well-known') || req.path.startsWith('/register')) {
     return next()
   }
   csrf({ cookie: false })(req, res, next)
@@ -125,9 +137,10 @@ if (process.env.NODE_ENV === 'production') {
 // Routes
 app.use('/.well-known', wellKnownRouter)
 app.use('/.well-known', jwksRouter)
-app.use('/authorize', authorizeRouter)
-app.use('/token', tokenRouter)
-app.use('/register', registerRouter)
+app.use('/authorize', loginLimiter, authorizeRouter)
+app.use('/token', loginLimiter, tokenRouter)
+app.use('/userinfo', userinfoRouter)
+app.use('/register', registerLimiter, registerRouter)
 app.use('/users', usersRouter)
 
 // Error handler

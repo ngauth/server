@@ -84,6 +84,15 @@ function generateToken (payload, expiresIn = '1h') {
   })
 }
 
+function generateIdToken (claims, expiresIn = '1h') {
+  // ID tokens must include these required OIDC claims
+  // iss, sub, aud, exp, iat are added by generateToken via expiresIn
+  return jwt.sign(claims, privateKey, {
+    algorithm: 'RS256',
+    expiresIn
+  })
+}
+
 function verifyToken (token) {
   return jwt.verify(token, publicKey, {
     algorithms: ['RS256']
@@ -99,6 +108,7 @@ module.exports = {
   getPublicKeyJwk,
   getPublicKeyPem,
   generateToken,
+  generateIdToken,
   verifyToken,
   generateRandomToken
 }

@@ -42,7 +42,11 @@ async function initDb (dir) {
 async function readJson (filename) {
   const filePath = path.join(dataDir, filename)
   const data = await fs.readFile(filePath, 'utf8')
-  return JSON.parse(data)
+  try {
+    return JSON.parse(data)
+  } catch (err) {
+    throw new Error(`Failed to parse JSON from ${filename}: ${err.message}`)
+  }
 }
 
 async function writeJson (filename, data) {

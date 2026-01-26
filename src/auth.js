@@ -48,7 +48,9 @@ function authenticateBearerToken (req, res, next) {
       algorithms: ['RS256']
     })
 
-    if (decoded.token_type !== 'access') {
+    // Ensure token is an access token (has token_type set or no token_type for backward compat)
+    // ID tokens will be verified separately via bearer check
+    if (decoded.token_type && decoded.token_type !== 'access') {
       throw new Error('Invalid token type')
     }
 

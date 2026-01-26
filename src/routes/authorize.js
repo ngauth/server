@@ -1,6 +1,6 @@
 /* eslint camelcase: "off" */
 const express = require('express')
-const { getClient, getUser, addCode } = require('../db')
+const { getClient, getUser, addCode, recordFailedLogin, clearFailedLoginAttempts } = require('../db')
 const { generateRandomToken } = require('../tokens')
 const { OAuthError } = require('../errors')
 const { verifyPassword } = require('../users')
@@ -8,7 +8,7 @@ const { verifyPassword } = require('../users')
 const router = express.Router()
 
 // HTML login form
-const loginForm = (clientId, redirectUri, scope, state, error) => `
+const loginForm = (clientId, redirectUri, scope, state, nonce, error) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,6 +29,7 @@ const loginForm = (clientId, redirectUri, scope, state, error) => `
     <input type="hidden" name="redirect_uri" value="${redirectUri}" />
     <input type="hidden" name="scope" value="${scope || ''}" />
     <input type="hidden" name="state" value="${state || ''}" />
+    ${nonce ? `<input type="hidden" name="nonce" value="${nonce}" />` : ''}
     <input type="text" name="username" placeholder="Username" required />
     <input type="password" name="password" placeholder="Password" required />
     <button type="submit">Sign In</button>
@@ -40,9 +41,9 @@ const loginForm = (clientId, redirectUri, scope, state, error) => `
 
 // GET /authorize - Show login form or redirect with code
 router.get('/', async (req, res, next) => {
-  const { client_id, redirect_uri, response_type, scope, state } = req.query
+  const { client_id, redirect_uri, response_type, scope, state, nonce } = req.query
 
-  // Validate required parameters (RFC 6749 4.1.1)
+  // Validate required parameters (RFC 6749 4.1.1, OIDC Core 3.1.2.1)
   if (!client_id) {
     return next(new OAuthError('invalid_request', 'Missing client_id parameter'))
   }
@@ -68,7 +69,7 @@ router.get('/', async (req, res, next) => {
     // Check if user is authenticated
     if (!req.session.userId) {
       // Show login form
-      return res.send(loginForm(client_id, redirect_uri, scope, state))
+      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce))
     }
 
     // User is authenticated, generate authorization code
@@ -81,6 +82,7 @@ router.get('/', async (req, res, next) => {
       redirect_uri,
       scope: scope || '',
       userId: req.session.userId,
+      nonce: nonce || null,
       expiresAt
     })
 
@@ -99,9 +101,14 @@ router.get('/', async (req, res, next) => {
 
 // POST /authorize - Process login
 router.post('/', async (req, res, next) => {
-  const { username, password, client_id, redirect_uri, scope, state } = req.body
+  const { username, password, client_id, redirect_uri, scope, state, nonce } = req.body
 
   try {
+    // Validate input
+    if (!username || !password) {
+      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, 'Username and password are required'))
+    }
+
     // Validate client
     const client = await getClient(client_id)
     if (!client) {
@@ -116,11 +123,23 @@ router.post('/', async (req, res, next) => {
     // Authenticate user
     const user = await getUser(username)
     if (!user || !(await verifyPassword(password, user.password))) {
-      return res.send(loginForm(client_id, redirect_uri, scope, state, 'Invalid username or password'))
+      // Record failed login attempt for rate limiting
+      if (user) {
+        await recordFailedLogin(user.id)
+      }
+      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, 'Invalid username or password'))
+    }
+
+    // Check if user account is locked
+    if (user.lockedUntil && user.lockedUntil > Date.now()) {
+      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, 'Account temporarily locked. Please try again later.'))
     }
 
     // Set session
     req.session.userId = user.id
+
+    // Clear failed login attempts on successful login
+    await clearFailedLoginAttempts(user.id)
 
     // Generate authorization code
     const code = generateRandomToken()
@@ -132,6 +151,7 @@ router.post('/', async (req, res, next) => {
       redirect_uri,
       scope: scope || '',
       userId: user.id,
+      nonce: nonce || null,
       expiresAt
     })
 

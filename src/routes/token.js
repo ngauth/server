@@ -1,7 +1,8 @@
 /* eslint camelcase: "off" */
 const express = require('express')
-const { getClient, getCode, deleteCode, cleanupExpiredCodes } = require('../db')
-const { generateToken } = require('../tokens')
+const { getClient, getCode, deleteCode, cleanupExpiredCodes, getUserById } = require('../db')
+const { generateToken, generateIdToken } = require('../tokens')
+const { buildIdTokenClaims } = require('../oidc')
 const { OAuthError } = require('../errors')
 
 const router = express.Router()
@@ -88,21 +89,42 @@ async function handleAuthorizationCodeGrant (req, res, next, client, code, redir
   // Delete code (single-use only per RFC 6749 4.1.2)
   await deleteCode(code)
 
+  // Get issuer from environment or derive from request
+  const issuer = process.env.ISSUER || `http://${req.get('host')}`
+
   // Generate access token
-  const payload = {
+  const accessTokenPayload = {
     sub: authCode.userId,
     client_id: client.client_id,
-    scope: authCode.scope
+    scope: authCode.scope,
+    token_type: 'access'
   }
 
-  const accessToken = generateToken(payload, '1h')
+  const accessToken = generateToken(accessTokenPayload, '1h')
 
-  res.json({
+  const response = {
     access_token: accessToken,
     token_type: 'Bearer',
     expires_in: 3600,
     scope: authCode.scope
-  })
+  }
+
+  // Generate ID token if openid scope is present (OIDC Core 1.0)
+  if (authCode.scope && authCode.scope.includes('openid')) {
+    const user = await getUserById(authCode.userId)
+    if (user) {
+      const idTokenClaims = buildIdTokenClaims(
+        user,
+        client.client_id,
+        issuer,
+        authCode.scope,
+        authCode.nonce
+      )
+      response.id_token = generateIdToken(idTokenClaims, '1h')
+    }
+  }
+
+  res.json(response)
 }
 
 function handleClientCredentialsGrant (req, res, next, client, scope) {
@@ -110,7 +132,8 @@ function handleClientCredentialsGrant (req, res, next, client, scope) {
   const payload = {
     sub: client.client_id,
     client_id: client.client_id,
-    scope: scope || ''
+    scope: scope || '',
+    token_type: 'access'
   }
 
   const accessToken = generateToken(payload, '1h')

@@ -15,6 +15,24 @@ router.post('/', async (req, res, next) => {
       return next(new OAuthError('invalid_request', 'redirect_uris is required and must be a non-empty array'))
     }
 
+    // Validate redirect URIs are valid URLs
+    for (const uri of redirect_uris) {
+      if (typeof uri !== 'string') {
+        return next(new OAuthError('invalid_request', 'All redirect_uris must be strings'))
+      }
+      try {
+        // eslint-disable-next-line no-new
+        new URL(uri)
+      } catch (err) {
+        return next(new OAuthError('invalid_request', `Invalid redirect_uri: ${uri}`))
+      }
+    }
+
+    // Validate client_name length
+    if (client_name && typeof client_name === 'string' && client_name.length > 255) {
+      return next(new OAuthError('invalid_request', 'client_name must not exceed 255 characters'))
+    }
+
     // Generate client credentials
     const client_id = crypto.randomBytes(16).toString('hex')
     const client_secret = crypto.randomBytes(32).toString('hex')
