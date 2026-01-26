@@ -11,6 +11,7 @@ const { ensurePrivateKey, getPublicKeyPem } = require('./tokens')
 const { setPublicKey } = require('./auth')
 const { auditMiddleware, initAuditLog } = require('./middleware/auditLog')
 const { loginLimiter, registerLimiter } = require('./middleware/rateLimit')
+const healthRouter = require('./routes/health')
 const wellKnownRouter = require('./routes/well-known')
 const jwksRouter = require('./routes/jwks')
 const authorizeRouter = require('./routes/authorize')
@@ -84,6 +85,9 @@ initialize().catch(err => {
   process.exit(1)
 })
 
+// Health checks first (no middleware required)
+app.use(healthRouter)
+
 // Security headers with helmet
 app.use(helmet({
   hsts: {
@@ -114,8 +118,8 @@ app.use(session({
 
 // CSRF protection (only for HTML forms, skip API routes)
 app.use((req, res, next) => {
-  // Skip CSRF for API routes (they use Bearer tokens)
-  if (req.path.startsWith('/token') || req.path.startsWith('/userinfo') || req.path.startsWith('/users') || req.path.startsWith('/.well-known') || req.path.startsWith('/register')) {
+  // Skip CSRF for API routes (they use Bearer tokens) and health checks
+  if (req.path.startsWith('/token') || req.path.startsWith('/userinfo') || req.path.startsWith('/users') || req.path.startsWith('/.well-known') || req.path.startsWith('/register') || req.path.startsWith('/health')) {
     return next()
   }
   csrf({ cookie: false })(req, res, next)

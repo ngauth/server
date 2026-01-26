@@ -8,10 +8,28 @@
 const request = require('supertest')
 const app = require('../../src/index')
 
+/**
+ * Wait for server to be ready by polling readiness endpoint
+ */
+async function waitForReady (maxAttempts = 30, delayMs = 100) {
+  for (let i = 0; i < maxAttempts; i++) {
+    try {
+      const response = await request(app).get('/health/ready')
+      if (response.status === 200 && response.body.status === 'ready') {
+        return true
+      }
+    } catch (err) {
+      // Server not ready yet, continue polling
+    }
+    await new Promise(resolve => setTimeout(resolve, delayMs))
+  }
+  throw new Error('Server failed to become ready within 3 seconds')
+}
+
 describe('OIDC Integration Tests', () => {
-  // Allow time for key initialization before running tests
+  // Wait for server readiness before running tests
   beforeAll(async () => {
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await waitForReady()
   })
 
   describe('OIDC Discovery (.well-known/openid-configuration)', () => {
