@@ -3,6 +3,7 @@ const express = require('express')
 const { getClient, getUser, addCode } = require('../db')
 const { generateRandomToken } = require('../tokens')
 const { OAuthError } = require('../errors')
+const { verifyPassword } = require('../users')
 
 const router = express.Router()
 
@@ -114,7 +115,7 @@ router.post('/', async (req, res, next) => {
 
     // Authenticate user
     const user = await getUser(username)
-    if (!user || user.password !== password) {
+    if (!user || !(await verifyPassword(password, user.password))) {
       return res.send(loginForm(client_id, redirect_uri, scope, state, 'Invalid username or password'))
     }
 
