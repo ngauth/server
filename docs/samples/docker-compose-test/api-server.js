@@ -47,7 +47,7 @@ async function verifyToken (req, res, next) {
     // For this example, we'll just check if the token is from the OAuth server
     const jwt = require('jsonwebtoken')
     const keys = await getPublicKeys()
-    
+
     // Get the public key (for RS256, we need the public key from JWKS)
     const key = keys.keys[0]
     if (!key) {
@@ -60,7 +60,7 @@ async function verifyToken (req, res, next) {
     // For demonstration, we'll accept any token from the OAuth server
     // In production, verify the signature properly
     console.log('Token received:', token.substring(0, 20) + '...')
-    
+
     // Decode without verification for demo (DO NOT DO THIS IN PRODUCTION!)
     const decoded = jwt.decode(token)
     if (!decoded) {
@@ -102,7 +102,7 @@ app.get('/api/protected', verifyToken, (req, res) => {
 // Protected endpoint with specific scope requirement
 app.get('/api/admin', verifyToken, (req, res) => {
   const userScopes = (req.user.scope || '').split(' ').filter(s => s)
-  
+
   if (!userScopes.includes('admin')) {
     return res.status(403).json({
       error: 'forbidden',
