@@ -44,4 +44,6 @@ jobs:
         with:
           push: true
           tags: "${{ vars.DOCKER_USER }}/server:latest"
+          provenance: true
+          sbom: true
   
