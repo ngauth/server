@@ -73,6 +73,76 @@ async function getUser (username) {
   return users.find(u => u.username === username)
 }
 
+async function getUserById (id) {
+  const users = await getUsers()
+  return users.find(u => u.id === id)
+}
+
+async function getUserByEmail (email) {
+  const users = await getUsers()
+  return users.find(u => u.email === email)
+}
+
+async function addUser (user) {
+  const users = await getUsers()
+  users.push(user)
+  await writeJson('users.json', users)
+  return user
+}
+
+async function updateUser (id, updates) {
+  const users = await getUsers()
+  const userIndex = users.findIndex(u => u.id === id)
+  if (userIndex === -1) {
+    throw new Error('User not found')
+  }
+  users[userIndex] = { ...users[userIndex], ...updates }
+  await writeJson('users.json', users)
+  return users[userIndex]
+}
+
+async function deleteUser (id) {
+  const users = await getUsers()
+  const filtered = users.filter(u => u.id !== id)
+  await writeJson('users.json', filtered)
+}
+
+async function recordFailedLogin (userId) {
+  const users = await getUsers()
+  const userIndex = users.findIndex(u => u.id === userId)
+  if (userIndex === -1) {
+    return
+  }
+
+  const user = users[userIndex]
+  const now = Date.now()
+  const LOCKOUT_DURATION_MS = 15 * 60 * 1000 // 15 minutes
+  const MAX_FAILED_ATTEMPTS = 5
+
+  user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1
+  user.lastFailedLogin = now
+
+  if (user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
+    user.lockedUntil = now + LOCKOUT_DURATION_MS
+  }
+
+  users[userIndex] = user
+  await writeJson('users.json', users)
+}
+
+async function clearFailedLoginAttempts (userId) {
+  const users = await getUsers()
+  const userIndex = users.findIndex(u => u.id === userId)
+  if (userIndex === -1) {
+    return
+  }
+
+  users[userIndex].failedLoginAttempts = 0
+  users[userIndex].lastFailedLogin = null
+
+  await writeJson('users.json', users)
+}
+
 async function getCodes () {
   return await readJson('codes.json')
 }
@@ -109,6 +179,13 @@ module.exports = {
   addClient,
   getUsers,
   getUser,
+  getUserById,
+  getUserByEmail,
+  addUser,
+  updateUser,
+  deleteUser,
+  recordFailedLogin,
+  clearFailedLoginAttempts,
   getCodes,
   addCode,
   getCode,

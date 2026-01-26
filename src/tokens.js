@@ -73,6 +73,10 @@ function getPublicKeyJwk () {
   }
 }
 
+function getPublicKeyPem () {
+  return publicKey
+}
+
 function generateToken (payload, expiresIn = '1h') {
   return jwt.sign(payload, privateKey, {
     algorithm: 'RS256',
@@ -93,6 +97,7 @@ function generateRandomToken (bytes = 32) {
 module.exports = {
   ensurePrivateKey,
   getPublicKeyJwk,
+  getPublicKeyPem,
   generateToken,
   verifyToken,
   generateRandomToken

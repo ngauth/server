@@ -5,12 +5,19 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+audit.log*
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+# Sensitive data
+*.pem
+*.key
+*.crt
+.env
+.env.local
+.env.*.local
 
-# Runtime data
-pids
+# Runtime data - SENSITIVE
+/data/
+data/
 *.pid
 *.seed
 *.pid.lock
