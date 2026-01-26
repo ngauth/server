@@ -1,3 +1,4 @@
+/* global describe, expect, beforeAll, afterAll, it */
 const request = require('supertest')
 const path = require('path')
 const fs = require('fs').promises

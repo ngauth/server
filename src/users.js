@@ -19,7 +19,7 @@ function validatePassword (password) {
   const hasUppercase = /[A-Z]/.test(password)
   const hasLowercase = /[a-z]/.test(password)
   const hasNumbers = /[0-9]/.test(password)
-  const hasSymbols = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+  const hasSymbols = /[!@#$%^&*()_+=[\]{};':"\\|,.<>/?]/.test(password)
 
   const complexity = [hasUppercase, hasLowercase, hasNumbers, hasSymbols].filter(Boolean).length
 
@@ -52,7 +52,7 @@ function validateEmail (email) {
     throw new Error('Email too long')
   }
 
-  const [localPart, domain] = email.split('@')
+  const [localPart] = email.split('@')
 
   // RFC 5321 - local part max 64 chars
   if (localPart.length > 64) {

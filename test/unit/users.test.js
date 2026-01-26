@@ -1,3 +1,4 @@
+/* global describe, expect, it */
 const { hashPassword, verifyPassword, validatePassword, validateUsername, validateEmail } = require('../../src/users')
 
 describe('User utilities', () => {
