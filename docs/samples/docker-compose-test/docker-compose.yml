@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  oauth-server:
+    image: ngauth/ngauth:latest
+    build:
+      context: ../../..
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      NGAUTH_DATA: /data
+    volumes:
+      - oauth-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/.well-known/oauth-authorization-server"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api-server:
+    build:
+      context: .
+      dockerfile: api-server.Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      OAUTH_SERVER_URL: http://oauth-server:3000
+      NODE_ENV: development
+    depends_on:
+      oauth-server:
+        condition: service_healthy
+
+volumes:
+  oauth-data:
