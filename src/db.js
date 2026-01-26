@@ -1,5 +1,6 @@
 const fs = require('fs').promises
 const path = require('path')
+const { hashPassword } = require('./users')
 
 let dataDir
 
@@ -18,12 +19,13 @@ async function initDb (dir) {
   try {
     await fs.access(usersFile)
   } catch {
-    // Seed a default test user
+    // Seed a default test user with hashed password
+    const hashedPassword = await hashPassword('testpass')
     const defaultUsers = [
       {
         id: 'user1',
         username: 'testuser',
-        password: 'testpass' // In production, hash this!
+        password: hashedPassword
       }
     ]
     await fs.writeFile(usersFile, JSON.stringify(defaultUsers, null, 2))

@@ -15,6 +15,7 @@ const {
   deleteCode,
   cleanupExpiredCodes
 } = require('../../src/db')
+const { verifyPassword } = require('../../src/users')
 
 describe('Database Operations', () => {
   let testDir
@@ -43,7 +44,9 @@ describe('Database Operations', () => {
       const users = await getUsers()
       expect(users).toHaveLength(1)
       expect(users[0].username).toBe('testuser')
-      expect(users[0].password).toBe('testpass')
+      // Verify password is hashed correctly
+      const passwordValid = await verifyPassword('testpass', users[0].password)
+      expect(passwordValid).toBe(true)
     })
 
     test('should create codes.json file', () => {
@@ -122,7 +125,9 @@ describe('Database Operations', () => {
 
       expect(user).toBeDefined()
       expect(user.id).toBe('user1')
-      expect(user.password).toBe('testpass')
+      // Verify password is hashed correctly
+      const passwordValid = await verifyPassword('testpass', user.password)
+      expect(passwordValid).toBe(true)
     })
 
     test('getUser should return undefined for unknown username', async () => {
