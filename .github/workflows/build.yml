@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
       - name: Install dependencies
         run: npm ci
       - name: Run linter
@@ -43,5 +43,5 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: "${{ vars.DOCKER_USER }}/ngauth:latest"
+          tags: "${{ vars.DOCKER_USER }}/server:latest"
   
