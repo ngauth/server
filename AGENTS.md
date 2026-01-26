@@ -34,5 +34,18 @@
   - Metadata served over TLS - §3 - via reverse proxy
   - Multiple redirect URIs per client - §3.1.2.2
   - Dynamic Client Registration (RFC 7591)
+- OpenID Connect Core 1.0 features:
+  - ID Token generation with RS256 signing
+  - OpenID Provider Configuration (/.well-known/openid-configuration)
+  - UserInfo Endpoint (/userinfo) - §5.3
+  - Standard Claims support (profile, email scopes) - §5.1
+  - Nonce parameter support for ID tokens - §3.1.2.1
+  - Subject Identifier type: public - §8
+  - ID Token Claims: iss, sub, aud, exp, iat, nonce - §2
+  - Profile Scope Claims: name, preferred_username, updated_at - §5.4
+  - Email Scope Claims: email, email_verified - §5.4
+  - UserInfo endpoint Bearer token authentication - §5.3.1
+  - JWKS endpoint (/.well-known/jwks.json) for public key distribution - §10.1
 - code structure: src for source files, test for test files
 - unit testing framework: jest
+- make sure to pull before pushing changes
