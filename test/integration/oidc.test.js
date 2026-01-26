@@ -9,6 +9,11 @@ const request = require('supertest')
 const app = require('../../src/index')
 
 describe('OIDC Integration Tests', () => {
+  // Allow time for key initialization before running tests
+  beforeAll(async () => {
+    await new Promise(resolve => setTimeout(resolve, 100))
+  })
+
   describe('OIDC Discovery (.well-known/openid-configuration)', () => {
     test('should serve OpenID Configuration endpoint', async () => {
       const response = await request(app)
