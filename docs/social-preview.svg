@@ -1,0 +1,65 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A202C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2D3748;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Shield shape (larger for social preview) -->
+  <g transform="translate(200, 315)">
+    <path d="M0 -180 L120 -140 L120 -20 Q120 60 0 120 Q-120 60 -120 -20 L-120 -140 Z" 
+          fill="#4299E1" stroke="#2C5282" stroke-width="6"/>
+    
+    <!-- Key symbol -->
+    <g transform="translate(0, -30)">
+      <!-- Key head (circle) -->
+      <circle cx="0" cy="0" r="28" fill="#FFFFFF" stroke="#2C5282" stroke-width="5"/>
+      <circle cx="0" cy="0" r="16" fill="none" stroke="#2C5282" stroke-width="5"/>
+      
+      <!-- Key shaft -->
+      <rect x="-6" y="28" width="12" height="60" fill="#FFFFFF" stroke="#2C5282" stroke-width="5" rx="3"/>
+      
+      <!-- Key teeth -->
+      <rect x="6" y="74" width="16" height="10" fill="#FFFFFF" stroke="#2C5282" stroke-width="3" rx="2"/>
+      <rect x="6" y="86" width="12" height="10" fill="#FFFFFF" stroke="#2C5282" stroke-width="3" rx="2"/>
+    </g>
+    
+    <!-- Lock accent -->
+    <path d="M-16 -100 L-16 -115 Q-16 -130 0 -130 Q16 -130 16 -115 L16 -100" 
+          fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+    <rect x="-20" y="-104" width="40" height="24" fill="#FFFFFF" stroke="#2C5282" stroke-width="3" rx="3"/>
+    <circle cx="0" cy="-92" r="5" fill="#2C5282"/>
+  </g>
+  
+  <!-- Project name and tagline -->
+  <text x="420" y="250" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="bold" 
+        fill="#FFFFFF">ngauth</text>
+  <text x="420" y="320" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="normal" 
+        fill="#A0AEC0">Lightweight OAuth 2.0 and OIDC Server</text>
+  
+  <!-- Feature badges -->
+  <g transform="translate(420, 360)">
+    <!-- Badge 1 -->
+    <rect x="0" y="0" width="180" height="48" rx="24" fill="#4299E1" opacity="0.2"/>
+    <text x="90" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="600" 
+          text-anchor="middle" fill="#63B3ED">OAuth 2.0</text>
+    
+    <!-- Badge 2 -->
+    <rect x="200" y="0" width="180" height="48" rx="24" fill="#48BB78" opacity="0.2"/>
+    <text x="290" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="600" 
+          text-anchor="middle" fill="#68D391">OpenID Connect</text>
+    
+    <!-- Badge 3 -->
+    <rect x="400" y="0" width="180" height="48" rx="24" fill="#ED8936" opacity="0.2"/>
+    <text x="490" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="600" 
+          text-anchor="middle" fill="#F6AD55">Testcontainers</text>
+  </g>
+  
+  <!-- Bottom text -->
+  <text x="600" y="580" font-family="Arial, sans-serif" font-size="24" font-weight="normal" 
+        text-anchor="middle" fill="#718096">Perfect for testing and development</text>
+</svg>

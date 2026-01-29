@@ -1,0 +1,32 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#2D3748" opacity="0.05"/>
+  
+  <!-- Shield shape -->
+  <path d="M256 80 L400 140 L400 260 Q400 360 256 440 Q112 360 112 260 L112 140 Z" 
+        fill="#4299E1" stroke="#2C5282" stroke-width="8"/>
+  
+  <!-- Key symbol -->
+  <g transform="translate(256, 240)">
+    <!-- Key head (circle) -->
+    <circle cx="0" cy="0" r="35" fill="#FFFFFF" stroke="#2C5282" stroke-width="6"/>
+    <circle cx="0" cy="0" r="20" fill="none" stroke="#2C5282" stroke-width="6"/>
+    
+    <!-- Key shaft -->
+    <rect x="-8" y="35" width="16" height="80" fill="#FFFFFF" stroke="#2C5282" stroke-width="6" rx="4"/>
+    
+    <!-- Key teeth -->
+    <rect x="8" y="95" width="20" height="12" fill="#FFFFFF" stroke="#2C5282" stroke-width="4" rx="2"/>
+    <rect x="8" y="110" width="15" height="12" fill="#FFFFFF" stroke="#2C5282" stroke-width="4" rx="2"/>
+  </g>
+  
+  <!-- Lock accent (top of shield) -->
+  <path d="M236 160 L236 140 Q236 120 256 120 Q276 120 276 140 L276 160" 
+        fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+  <rect x="230" y="155" width="52" height="30" fill="#FFFFFF" stroke="#2C5282" stroke-width="4" rx="4"/>
+  <circle cx="256" cy="170" r="6" fill="#2C5282"/>
+  
+  <!-- Text 'ng' in modern font style -->
+  <text x="256" y="410" font-family="Arial, sans-serif" font-size="80" font-weight="bold" 
+        text-anchor="middle" fill="#2D3748">ng</text>
+</svg>
