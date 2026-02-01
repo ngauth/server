@@ -1,0 +1,33 @@
+{
+  "name": "ngauth-testcontainers-example",
+  "version": "1.0.0",
+  "description": "Example of using ngauth/server with Testcontainers for OAuth 2.0 integration testing",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "oauth",
+    "testcontainers",
+    "integration-testing",
+    "ngauth",
+    "jwt"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "testcontainers": "^10.7.0"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 60000,
+    "verbose": true
+  }
+}

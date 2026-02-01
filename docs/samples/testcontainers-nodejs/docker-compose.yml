@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  ngauth:
+    image: ngauth/server:latest
+    container_name: ngauth-oauth-server
+    ports:
+      - "3000:3000"
+    volumes:
+      - oauth-data:/app/data
+    environment:
+      - NODE_ENV=development
+      - OAUTH_ISSUER=http://localhost:3000
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/.well-known/oauth-authorization-server"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  oauth-data:
