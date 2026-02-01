@@ -6,6 +6,7 @@ const helmet = require('helmet')
 const crypto = require('crypto')
 const fs = require('fs').promises
 const path = require('path')
+const config = require('./config')
 const { initDb, cleanupExpiredCodes } = require('./db')
 const { ensurePrivateKey, getPublicKeyPem } = require('./tokens')
 const { setPublicKey } = require('./auth')
@@ -21,7 +22,7 @@ const userinfoRouter = require('./routes/userinfo')
 const usersRouter = require('./routes/users')
 const { errorHandler } = require('./errors')
 
-const PORT = process.env.PORT || 3000
+const PORT = config.port
 const NGAUTH_DATA = process.env.NGAUTH_DATA || './data'
 
 const app = express()
@@ -138,12 +139,14 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-// Routes
-app.use('/.well-known', wellKnownRouter)
-app.use('/.well-known', jwksRouter)
-app.use('/authorize', loginLimiter, authorizeRouter)
-app.use('/token', loginLimiter, tokenRouter)
-app.use('/userinfo', userinfoRouter)
+// Routes (using preset-configured endpoints)
+app.use(config.endpoints.oidc, wellKnownRouter)
+app.use(config.endpoints.jwks, jwksRouter)
+app.use(config.endpoints.authorize, loginLimiter, authorizeRouter)
+app.use(config.endpoints.token, loginLimiter, tokenRouter)
+if (config.endpoints.userinfo) {
+  app.use(config.endpoints.userinfo, userinfoRouter)
+}
 app.use('/register', registerLimiter, registerRouter)
 app.use('/users', usersRouter)
 
@@ -153,8 +156,12 @@ app.use(errorHandler)
 if (require.main === module) {
   initialize().then(() => {
     app.listen(PORT, () => {
-      console.log(`OAuth 2.0 server listening on port ${PORT}`)
-      console.log(`Data directory: ${NGAUTH_DATA}`)
+      console.log(`🚀 ngauth server listening on port ${PORT}`)
+      console.log(`📁 Data directory: ${NGAUTH_DATA}`)
+      console.log(`🌐 Issuer: ${config.issuer}`)
+      if (config.preset !== 'custom') {
+        console.log(`🎭 Preset: ${config.name}`)
+      }
     })
   }).catch(err => {
     console.error('Failed to start server:', err)

@@ -158,6 +158,92 @@ services:
 
 ---
 
+## 🎭 Provider Presets
+
+**ngauth can mimic popular OAuth providers** for realistic testing! Test your application against different OAuth server behaviors without running the actual services.
+
+### Available Presets
+
+```bash
+# Mimic Auth0
+docker run -e NGAUTH_PRESET=auth0 -p 3000:3000 ngauth/server
+
+# Mimic Okta  
+docker run -e NGAUTH_PRESET=okta -p 3000:3000 ngauth/server
+
+# Mimic Azure AD B2C
+docker run -e NGAUTH_PRESET=azureb2c -p 3000:3000 ngauth/server
+
+# Mimic Keycloak
+docker run -e NGAUTH_PRESET=keycloak -p 3000:3000 ngauth/server
+
+# Mimic Duende IdentityServer
+docker run -e NGAUTH_PRESET=identityserver -p 3000:3000 ngauth/server
+
+# Mimic Google Identity Platform
+docker run -e NGAUTH_PRESET=google -p 3000:3000 ngauth/server
+
+# Mimic AWS Cognito
+docker run -e NGAUTH_PRESET=cognito -p 3000:3000 ngauth/server
+```
+
+### What Each Preset Configures
+
+Each preset automatically sets up:
+- ✅ **Endpoint paths** - Match the exact URLs of the real provider
+- ✅ **Claim structure** - Use provider-specific claim names and formats
+- ✅ **Token lifetimes** - Realistic TTL values
+- ✅ **Scopes and roles** - Provider-specific claim patterns
+
+| Preset | Scope Claim | Format | Roles/Groups | Special Features |
+|--------|-------------|--------|--------------|------------------|
+| **auth0** | `scope` | String | `permissions` array | Namespaced claims |
+| **okta** | `scp` | Array | `groups` array | No separate roles |
+| **azureb2c** | `scp` | String | `roles` array | Azure-style GUIDs |
+| **keycloak** | `scope` | String | `realm_access.roles` | Hierarchical roles |
+| **identityserver** | `scope` | String | `role` array | Clean claim names |
+| **google** | `scope` | String | None | Minimal claims |
+| **cognito** | `scope` | String | `cognito:groups` | AWS-prefixed claims |
+
+### Example: Test Your App with Multiple Providers
+
+```javascript
+// Test that your app works with different OAuth providers
+const providers = ['auth0', 'okta', 'azureb2c', 'keycloak'];
+
+describe.each(providers)('OAuth Provider: %s', (preset) => {
+  let container;
+  
+  beforeAll(async () => {
+    container = await new GenericContainer('ngauth/server')
+      .withExposedPorts(3000)
+      .withEnvironment('NGAUTH_PRESET', preset)
+      .start();
+  });
+  
+  it('should authenticate successfully', async () => {
+    // Your test code - works with all providers!
+  });
+});
+```
+
+### Fine-Tune with Environment Variables
+
+Override specific settings while using a preset:
+
+```bash
+# Use Auth0 preset but with custom token TTL
+docker run \
+  -e NGAUTH_PRESET=auth0 \
+  -e NGAUTH_ACCESS_TOKEN_TTL=7200 \
+  -p 3000:3000 \
+  ngauth/server
+```
+
+**Advanced Configuration:** See [Configuration Reference](#-configuration) for all available environment variables.
+
+---
+
 ## 🧪 Testing with Testcontainers
 
 ngauth is optimized for use with [Testcontainers](https://testcontainers.com/), making it perfect for integration testing in any language.
@@ -226,7 +312,113 @@ npm start
 
 ---
 
-## 🔑 Pre-configured Test Data
+## �️ Configuration
+
+ngauth works with zero configuration but can be customized via environment variables.
+
+### Quick Configuration with Presets
+
+Use `NGAUTH_PRESET` to instantly configure ngauth to match popular OAuth providers:
+
+```bash
+NGAUTH_PRESET=auth0        # Auth0
+NGAUTH_PRESET=okta         # Okta
+NGAUTH_PRESET=azureb2c     # Azure AD B2C
+NGAUTH_PRESET=keycloak     # Keycloak
+NGAUTH_PRESET=identityserver  # Duende IdentityServer
+NGAUTH_PRESET=google       # Google
+NGAUTH_PRESET=cognito      # AWS Cognito
+NGAUTH_PRESET=custom       # Manual configuration (default)
+```
+
+### Advanced Environment Variables
+
+Override preset settings or configure manually:
+
+#### General Settings
+```bash
+PORT=3000                          # Server port
+NGAUTH_ISSUER=http://localhost:3000  # OAuth issuer URL
+NGAUTH_DATA=/app/data              # Data directory
+```
+
+#### Endpoint Paths
+```bash
+NGAUTH_AUTHORIZE_PATH=/authorize
+NGAUTH_TOKEN_PATH=/token
+NGAUTH_JWKS_PATH=/.well-known/jwks.json
+NGAUTH_OIDC_PATH=/.well-known/openid-configuration
+NGAUTH_USERINFO_PATH=/userinfo
+NGAUTH_INTROSPECT_PATH=/introspect
+NGAUTH_REVOKE_PATH=/revoke
+NGAUTH_LOGOUT_PATH=/logout
+```
+
+#### Claim Configuration
+```bash
+NGAUTH_SCOPE_CLAIM_NAME=scope      # Claim name for scopes
+NGAUTH_SCOPE_FORMAT=string         # "string" or "array"
+NGAUTH_ROLES_CLAIM_NAME=roles      # Claim name for roles
+NGAUTH_GROUPS_CLAIM_NAME=groups    # Claim name for groups
+NGAUTH_PERMISSIONS_CLAIM_NAME=permissions  # Claim name for permissions
+NGAUTH_REQUIRE_NAMESPACED_CLAIMS=false     # Auth0-style namespacing
+NGAUTH_NAMESPACE_PREFIX=https://myapp.com  # Namespace prefix
+```
+
+#### Token Settings
+```bash
+NGAUTH_ACCESS_TOKEN_TTL=3600       # Access token lifetime (seconds)
+NGAUTH_ID_TOKEN_TTL=3600           # ID token lifetime (seconds)
+NGAUTH_REFRESH_TOKEN_TTL=86400     # Refresh token lifetime (seconds)
+NGAUTH_TOKEN_SIGNING_ALG=RS256     # Signing algorithm
+```
+
+#### Feature Flags
+```bash
+NGAUTH_SUPPORT_PKCE=true           # Enable PKCE support
+NGAUTH_SUPPORT_REFRESH_TOKENS=true # Enable refresh tokens
+NGAUTH_SUPPORT_OFFLINE_ACCESS=true # Enable offline_access scope
+```
+
+### Example Configurations
+
+#### Docker Compose with Auth0 Preset
+```yaml
+version: '3.8'
+services:
+  oauth:
+    image: ngauth/server:latest
+    ports:
+      - "3000:3000"
+    environment:
+      NGAUTH_PRESET: auth0
+      NGAUTH_ACCESS_TOKEN_TTL: 7200
+```
+
+#### Testcontainers with Keycloak Preset
+```javascript
+const container = await new GenericContainer('ngauth/server')
+  .withExposedPorts(3000)
+  .withEnvironment('NGAUTH_PRESET', 'keycloak')
+  .withEnvironment('NGAUTH_ACCESS_TOKEN_TTL', '300')
+  .start();
+```
+
+#### Custom Configuration (No Preset)
+```bash
+docker run \
+  -e NGAUTH_PRESET=custom \
+  -e NGAUTH_AUTHORIZE_PATH=/custom/authorize \
+  -e NGAUTH_TOKEN_PATH=/custom/token \
+  -e NGAUTH_SCOPE_CLAIM_NAME=custom_scope \
+  -e NGAUTH_SCOPE_FORMAT=array \
+  -p 3000:3000 \
+  ngauth/server
+```
+
+---
+
+## �🔑 Pre-configured Test Data
 
 ngauth comes with pre-seeded data for immediate testing:
 
