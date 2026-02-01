@@ -1,30 +1,35 @@
 # ngauth Testcontainers .NET Example
 
-This example demonstrates how to use [ngauth](https://github.com/ngauth/server) OAuth 2.0 server with [Testcontainers for .NET](https://dotnet.testcontainers.org/) for integration testing.
+This example demonstrates how to use [ngauth](https://github.com/ngauth/server) OAuth 2.0 server with [Testcontainers for .NET](https://dotnet.testcontainers.org/) to test a protected ASP.NET Core Web API.
 
 ## Overview
 
-ngauth is a lightweight OAuth 2.0 and OpenID Connect (OIDC) server designed specifically for integration testing. This example shows how to:
+ngauth is a lightweight OAuth 2.0 and OpenID Connect (OIDC) server designed specifically for integration testing. This example shows a **realistic testing scenario**:
 
-- Start an ngauth container using Testcontainers .NET
-- Test OAuth 2.0 client credentials flow
-- Test OAuth 2.0 authorization code flow
-- Verify JWT token signatures using JWKS
-- Test the OIDC UserInfo endpoint
-- Handle error scenarios and token expiration
+- A sample ASP.NET Core Web API (`SampleApi`) with JWT Bearer authentication
+- Protected endpoints requiring authentication
+- Scope-based authorization (endpoints requiring specific OAuth scopes)
+- Integration tests using Testcontainers to spin up ngauth OAuth server
+- Tests validating that the API correctly enforces authentication and authorization
+
+This demonstrates how to test your API's security implementation in an automated, isolated way.
 
 ## Prerequisites
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or later
 - [Docker Desktop](https://www.docker.com/products/docker-desktop) (or Docker Engine on Linux)
-- Basic understanding of OAuth 2.0 and OIDC concepts
+- Basic understanding of OAuth 2.0 and ASP.NET Core authentication
 
 ## Project Structure
 
 ```
 testcontainers-dotnet/
-├── NgAuthTests.csproj       # Project file with dependencies
-├── NgAuthTests.cs           # Test suite with OAuth/OIDC tests
+├── SampleApi/
+│   ├── SampleApi.csproj     # Web API project
+│   └── Program.cs           # API with protected endpoints
+├── NgAuthTests.csproj       # Test project
+├── ProtectedApiTests.cs     # Integration tests for protected API
+├── NgAuthTests.cs           # Direct OAuth/OIDC flow tests (legacy)
 └── README.md               # This file
 ```
 
@@ -58,38 +63,133 @@ Run tests with detailed output:
 dotnet test --logger "console;verbosity=detailed"
 ```
 
-Run a specific test:
+Run a specific test class:
 ```bash
-dotnet test --filter "FullyQualifiedName~ClientCredentialsFlow"
+dotnet test --filter "FullyQualifiedName~ProtectedApiTests"
 ```
 
-Run tests in parallel (default behavior):
+Run a specific test:
 ```bash
-dotnet test --parallel
+dotnet test --filter "FullyQualifiedName~ScopeProtectedEndpoint_ShouldReturn200_WithRequiredScope"
+```
+
+## The Sample API
+
+The `SampleApi` project demonstrates a typical ASP.NET Core Web API with OAuth 2.0 JWT Bearer authentication:
+
+### Endpoints
+
+| Endpoint | Method | Auth Required | Scope Required | Description |
+|----------|--------|---------------|----------------|-------------|
+| `/api/public` | GET | ❌ No | - | Public endpoint, no authentication |
+| `/api/protected` | GET | ✅ Yes | - | Requires valid JWT token |
+| `/api/data` | GET | ✅ Yes | `read` | Requires token with 'read' scope |
+| `/api/data` | POST | ✅ Yes | `write` | Requires token with 'write' scope |
+| `/api/userinfo` | GET | ✅ Yes | - | Returns user claims from token |
+
+### Authentication Configuration
+
+The API uses Microsoft's `Microsoft.AspNetCore.Authentication.JwtBearer` package:
+
+```csharp
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = "http://localhost:3000"; // ngauth URL
+        options.RequireHttpsMetadata = false; // Allow HTTP for testing
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true
+        };
+    });
+```
+
+### Authorization Policies
+
+Scope-based policies are defined using claims:
+
+```csharp
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireReadScope", policy =>
+        policy.RequireClaim("scope", "read"));
+    
+    options.AddPolicy("RequireWriteScope", policy =>
+        policy.RequireClaim("scope", "write"));
+});
 ```
 
 ## Test Scenarios
 
-### 1. Container Health Check
-```csharp
-[Fact]
-public async Task Container_ShouldStart_AndBeHealthy()
-```
-Verifies that the ngauth container starts successfully and responds to health checks.
+### ProtectedApiTests (Realistic API Testing)
 
-### 2. OIDC Discovery
-```csharp
-[Fact]
-public async Task OidcDiscovery_ShouldReturn_WellKnownConfiguration()
-```
-Tests the `/.well-known/openid-configuration` endpoint to ensure proper OIDC discovery metadata.
+These tests demonstrate testing a real ASP.NET Core API with OAuth 2.0 protection:
 
-### 3. Client Credentials Flow
+#### 1. Public Endpoint Access
 ```csharp
 [Fact]
-public async Task ClientCredentialsFlow_ShouldReturn_ValidAccessToken()
+public async Task PublicEndpoint_ShouldBeAccessible_WithoutAuthentication()
 ```
-Tests the OAuth 2.0 client credentials grant type, commonly used for server-to-server authentication.
+Verifies that public endpoints work without authentication.
+
+#### 2. Protected Endpoint - No Token
+```csharp
+[Fact]
+public async Task ProtectedEndpoint_ShouldReturn401_WithoutToken()
+```
+Ensures protected endpoints return HTTP 401 Unauthorized when no token is provided.
+
+#### 3. Protected Endpoint - Valid Token
+```csharp
+[Fact]
+public async Task ProtectedEndpoint_ShouldReturn200_WithValidToken()
+```
+Tests that endpoints protected with `[Authorize]` accept valid JWT tokens from ngauth.
+
+#### 4. Scope Protection - Missing Scope
+```csharp
+[Fact]
+public async Task ScopeProtectedEndpoint_ShouldReturn403_WithoutRequiredScope()
+```
+Verifies that endpoints requiring specific scopes return HTTP 403 Forbidden when the token lacks the required scope.
+
+#### 5. Scope Protection - With Required Scope
+```csharp
+[Fact]
+public async Task ScopeProtectedEndpoint_ShouldReturn200_WithRequiredScope()
+```
+Tests successful access when the token contains the required scope claim.
+
+#### 6. Write Operations - Scope Enforcement
+```csharp
+[Fact]
+public async Task WriteEndpoint_ShouldReturn403_WithoutWriteScope()
+public async Task WriteEndpoint_ShouldReturn200_WithWriteScope()
+```
+Demonstrates testing write operations that require specific permissions.
+
+#### 7. User Claims Propagation
+```csharp
+[Fact]
+public async Task UserInfoEndpoint_ShouldReturnClaims_WithValidToken()
+```
+Verifies that user claims from the OAuth token are correctly available in the API.
+
+### NgAuthTests (Direct OAuth Flow Testing)
+
+These tests demonstrate direct OAuth 2.0 flow testing:
+
+#### 1. Container Health Check
+Verifies that the ngauth container starts successfully.
+
+#### 2. OIDC Discovery
+Tests the `/.well-known/openid-configuration` endpoint.
+
+#### 3. Client Credentials Flow
+Tests OAuth 2.0 client credentials grant for service-to-service authentication.
 
 **Request:**
 ```http
@@ -157,29 +257,52 @@ Demonstrates handling of expired tokens and validation errors.
 
 This project uses the following NuGet packages:
 
+### Test Project
 - **Testcontainers** (3.7.0): Container orchestration for tests
 - **xUnit** (2.6.6): Testing framework
 - **System.IdentityModel.Tokens.Jwt** (7.3.1): JWT token handling and validation
 - **Microsoft.IdentityModel.Protocols.OpenIdConnect** (7.3.1): OIDC protocol support
+- **Microsoft.AspNetCore.Mvc.Testing** (8.0.1): In-memory API testing
 
-## Configuration
+### API Project
+- **Microsoft.AspNetCore.Authentication.JwtBearer** (8.0.1): JWT Bearer authentication for ASP.NET Core
 
-### Container Configuration
+## How It Works
 
-The ngauth container is configured in the test setup:
+### Test Setup Flow
 
-```csharp
-_container = new ContainerBuilder()
-    .WithImage("ngauth/server:latest")
-    .WithPortBinding(3000, true)  // Map container port 3000 to random host port
-    .WithWaitStrategy(Wait.ForUnixContainer()
-        .UntilHttpRequestIsSucceeded(r => r.ForPort(3000)))
-    .Build();
-```
+1. **Start ngauth OAuth Container**
+   ```csharp
+   _oauthContainer = new ContainerBuilder()
+       .WithImage("ngauth/server:latest")
+       .WithPortBinding(3000, true)
+       .Build();
+   await _oauthContainer.StartAsync();
+   ```
+
+2. **Configure API to Use ngauth**
+   ```csharp
+   _apiFactory = new WebApplicationFactory<Program>()
+       .WithWebHostBuilder(builder =>
+       {
+           builder.ConfigureAppConfiguration((context, config) =>
+           {
+               config.AddInMemoryCollection(new Dictionary<string, string?>
+               {
+                   ["Authentication:Authority"] = oauthContainerUrl
+               });
+           });
+       });
+   ```
+
+3. **Run Tests Against Protected API**
+   - Get token from ngauth OAuth container
+   - Call API endpoints with token
+   - Verify authorization behavior
 
 ### Default Credentials
 
-ngauth comes with default test credentials (automatically configured):
+ngauth comes with default test credentials:
 
 - **Client ID**: `test-client`
 - **Client Secret**: `test-secret`
@@ -209,67 +332,122 @@ Available environment variables:
 
 ## Code Walkthrough
 
-### 1. Test Lifecycle Management
+### 1. Testing a Protected API
 
-The `IAsyncLifetime` interface provides setup and teardown hooks:
+The key pattern is using `WebApplicationFactory` to test your API with ngauth:
 
 ```csharp
-public class NgAuthOAuthTests : IAsyncLifetime
+public class ProtectedApiTests : IAsyncLifetime
 {
+    private IContainer? _oauthContainer;
+    private WebApplicationFactory<Program>? _apiFactory;
+    private HttpClient? _apiClient;
+
     public async Task InitializeAsync()
     {
-        // Start container before each test class
-        await _container.StartAsync();
-        _baseUrl = $"http://localhost:{_container.GetMappedPublicPort(3000)}";
-    }
+        // Start ngauth OAuth container
+        _oauthContainer = new ContainerBuilder()
+            .WithImage("ngauth/server:latest")
+            .WithPortBinding(3000, true)
+            .Build();
+        await _oauthContainer.StartAsync();
+        
+        var oauthUrl = $"http://localhost:{_oauthContainer.GetMappedPublicPort(3000)}";
 
-    public async Task DisposeAsync()
-    {
-        // Clean up after all tests complete
-        await _container.StopAsync();
-        await _container.DisposeAsync();
+        // Start API with OAuth authority pointing to ngauth
+        _apiFactory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureAppConfiguration((context, config) =>
+                {
+                    config.AddInMemoryCollection(new Dictionary<string, string?>
+                    {
+                        ["Authentication:Authority"] = oauthUrl
+                    });
+                });
+            });
+
+        _apiClient = _apiFactory.CreateClient();
     }
 }
 ```
 
-### 2. Making OAuth Requests
+### 2. Getting OAuth Tokens
 
-Client credentials flow example:
+Helper method to get tokens with specific scopes:
 
 ```csharp
-var requestBody = new Dictionary<string, string>
+private async Task<string> GetClientCredentialsToken(string scope)
 {
-    { "grant_type", "client_credentials" },
-    { "client_id", ClientId },
-    { "client_secret", ClientSecret },
-    { "scope", "read write" }
-};
+    var requestBody = new Dictionary<string, string>
+    {
+        { "grant_type", "client_credentials" },
+        { "client_id", "test-client" },
+        { "client_secret", "test-secret" },
+        { "scope", scope }
+    };
 
-var response = await _httpClient.PostAsync("/token", 
-    new FormUrlEncodedContent(requestBody));
-var tokenResponse = await response.Content
-    .ReadFromJsonAsync<TokenResponse>();
+    var response = await _oauthClient.PostAsync("/token", 
+        new FormUrlEncodedContent(requestBody));
+    var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
+    return tokenResponse!.AccessToken;
+}
 ```
 
-### 3. JWT Validation
+### 3. Testing Protected Endpoints
 
-Validating tokens using JWKS:
+Test that authorization is enforced:
 
 ```csharp
-var jwksResponse = await _httpClient.GetAsync("/.well-known/jwks.json");
-var jwks = JsonSerializer.Deserialize<JsonWebKeySet>(
-    await jwksResponse.Content.ReadAsStringAsync());
-
-var validationParameters = new TokenValidationParameters
+[Fact]
+public async Task ProtectedEndpoint_ShouldReturn401_WithoutToken()
 {
-    ValidateIssuer = true,
-    ValidIssuer = _baseUrl,
-    ValidateLifetime = true,
-    IssuerSigningKeys = jwks.Keys
-};
+    // No Authorization header
+    var response = await _apiClient.GetAsync("/api/protected");
+    Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+}
 
-var principal = handler.ValidateToken(token, validationParameters, 
-    out var validatedToken);
+[Fact]
+public async Task ProtectedEndpoint_ShouldReturn200_WithValidToken()
+{
+    var token = await GetClientCredentialsToken("openid profile");
+    
+    var request = new HttpRequestMessage(HttpMethod.Get, "/api/protected");
+    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    var response = await _apiClient.SendAsync(request);
+    
+    Assert.True(response.IsSuccessStatusCode);
+}
+```
+
+### 4. Testing Scope-Based Authorization
+
+Verify scope requirements are enforced:
+
+```csharp
+[Fact]
+public async Task ScopeProtectedEndpoint_ShouldReturn403_WithoutRequiredScope()
+{
+    var token = await GetClientCredentialsToken("openid"); // Missing 'read' scope
+    
+    var request = new HttpRequestMessage(HttpMethod.Get, "/api/data");
+    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    var response = await _apiClient.SendAsync(request);
+    
+    Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+}
+
+[Fact]
+public async Task ScopeProtectedEndpoint_ShouldReturn200_WithRequiredScope()
+{
+    var token = await GetClientCredentialsToken("read"); // Has required scope
+    
+    var request = new HttpRequestMessage(HttpMethod.Get, "/api/data");
+    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    var response = await _apiClient.SendAsync(request);
+    
+    Assert.True(response.IsSuccessStatusCode);
+}
 ```
 
 ## Troubleshooting
