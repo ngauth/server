@@ -1,14 +1,16 @@
 /* eslint camelcase: "off" */
 const express = require('express')
+const csrf = require('csurf')
 const { getClient, getUser, addCode, recordFailedLogin, clearFailedLoginAttempts } = require('../db')
 const { generateRandomToken } = require('../tokens')
 const { OAuthError } = require('../errors')
 const { verifyPassword } = require('../users')
 
 const router = express.Router()
+const csrfProtection = csrf({ cookie: false })
 
-// HTML login form
-const loginForm = (clientId, redirectUri, scope, state, nonce, error) => `
+// HTML login form with CSRF token
+const loginForm = (clientId, redirectUri, scope, state, nonce, error, csrfToken) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,6 +27,7 @@ const loginForm = (clientId, redirectUri, scope, state, nonce, error) => `
   <h2>Sign In</h2>
   ${error ? `<div class="error">${error}</div>` : ''}
   <form method="POST">
+    <input type="hidden" name="_csrf" value="${csrfToken}" />
     <input type="hidden" name="client_id" value="${clientId}" />
     <input type="hidden" name="redirect_uri" value="${redirectUri}" />
     <input type="hidden" name="scope" value="${scope || ''}" />
@@ -40,7 +43,7 @@ const loginForm = (clientId, redirectUri, scope, state, nonce, error) => `
 `
 
 // GET /authorize - Show login form or redirect with code
-router.get('/', async (req, res, next) => {
+router.get('/', csrfProtection, async (req, res, next) => {
   const { client_id, redirect_uri, response_type, scope, state, nonce } = req.query
 
   // Validate required parameters (RFC 6749 4.1.1, OIDC Core 3.1.2.1)
@@ -83,8 +86,8 @@ router.get('/', async (req, res, next) => {
 
     // Check if user is authenticated
     if (!req.session.userId) {
-      // Show login form
-      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce))
+      // Show login form with CSRF token
+      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, null, req.csrfToken()))
     }
 
     // User is authenticated, generate authorization code
@@ -115,13 +118,13 @@ router.get('/', async (req, res, next) => {
 })
 
 // POST /authorize - Process login
-router.post('/', async (req, res, next) => {
+router.post('/', csrfProtection, async (req, res, next) => {
   const { username, password, client_id, redirect_uri, scope, state, nonce } = req.body
 
   try {
     // Validate input
     if (!username || !password) {
-      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, 'Username and password are required'))
+      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, 'Username and password are required', req.csrfToken()))
     }
 
     // Validate client
@@ -145,7 +148,7 @@ router.post('/', async (req, res, next) => {
       
       for (const requestedScope of requestedScopes) {
         if (!standardScopes.includes(requestedScope) && !allowedScopes.includes(requestedScope)) {
-          return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, `Scope '${requestedScope}' not registered for this client`))
+          return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, `Scope '${requestedScope}' not registered for this client`, req.csrfToken()))
         }
       }
     }
@@ -157,12 +160,12 @@ router.post('/', async (req, res, next) => {
       if (user) {
         await recordFailedLogin(user.id)
       }
-      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, 'Invalid username or password'))
+      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, 'Invalid username or password', req.csrfToken()))
     }
 
     // Check if user account is locked
     if (user.lockedUntil && user.lockedUntil > Date.now()) {
-      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, 'Account temporarily locked. Please try again later.'))
+      return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, 'Account temporarily locked. Please try again later.', req.csrfToken()))
     }
 
     // Set session

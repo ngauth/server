@@ -3,6 +3,7 @@
 const request = require('supertest')
 const express = require('express')
 const session = require('express-session')
+const cookieParser = require('cookie-parser')
 const crypto = require('crypto')
 const fs = require('fs')
 const path = require('path')
@@ -24,12 +25,14 @@ describe('Authorization Endpoint', () => {
     app = express()
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
+    app.use(cookieParser(crypto.randomBytes(32).toString('hex')))
     app.use(session({
       secret: crypto.randomBytes(32).toString('hex'),
       resave: false,
       saveUninitialized: false,
       cookie: { secure: false }
     }))
+    
     app.use('/authorize', authorizeRouter)
     app.use(errorHandler)
 
@@ -159,10 +162,35 @@ describe('Authorization Endpoint', () => {
   })
 
   describe('POST /authorize', () => {
+    // Helper function to extract CSRF token from login form
+    // This must maintain cookies across requests
+    const getCsrfTokenAndCookies = async (query) => {
+      const res = await request(app)
+        .get('/authorize')
+        .query(query)
+      
+      const match = res.text.match(/name="_csrf" value="([^"]+)"/)
+      const token = match ? match[1] : null
+      const cookies = res.headers['set-cookie'] || []
+      return { token, cookies }
+    }
+
     test('should authenticate and redirect with code', async () => {
+      const { token: csrfToken, cookies } = await getCsrfTokenAndCookies({
+        client_id: 'test-client',
+        redirect_uri: 'http://localhost:3000/callback',
+        response_type: 'code'
+      })
+      
+      if (!csrfToken) {
+        throw new Error('CSRF token extraction failed - token is null')
+      }
+
       const res = await request(app)
         .post('/authorize')
+        .set('Cookie', cookies)
         .send({
+          _csrf: csrfToken,
           username: 'testuser',
           password: 'testpass',
           client_id: 'test-client',
@@ -182,9 +210,18 @@ describe('Authorization Endpoint', () => {
     })
 
     test('should preserve state parameter in redirect', async () => {
+      const { token: csrfToken, cookies } = await getCsrfTokenAndCookies({
+        client_id: 'test-client',
+        redirect_uri: 'http://localhost:3000/callback',
+        response_type: 'code',
+        state: 'abc123'
+      })
+
       const res = await request(app)
         .post('/authorize')
+        .set('Cookie', cookies)
         .send({
+          _csrf: csrfToken,
           username: 'testuser',
           password: 'testpass',
           client_id: 'test-client',
@@ -198,9 +235,17 @@ describe('Authorization Endpoint', () => {
     })
 
     test('should reject invalid credentials', async () => {
+      const { token: csrfToken, cookies } = await getCsrfTokenAndCookies({
+        client_id: 'test-client',
+        redirect_uri: 'http://localhost:3000/callback',
+        response_type: 'code'
+      })
+
       const res = await request(app)
         .post('/authorize')
+        .set('Cookie', cookies)
         .send({
+          _csrf: csrfToken,
           username: 'testuser',
           password: 'wrongpass',
           client_id: 'test-client',
@@ -212,9 +257,17 @@ describe('Authorization Endpoint', () => {
     })
 
     test('should reject unknown username', async () => {
+      const { token: csrfToken, cookies } = await getCsrfTokenAndCookies({
+        client_id: 'test-client',
+        redirect_uri: 'http://localhost:3000/callback',
+        response_type: 'code'
+      })
+
       const res = await request(app)
         .post('/authorize')
+        .set('Cookie', cookies)
         .send({
+          _csrf: csrfToken,
           username: 'unknown',
           password: 'testpass',
           client_id: 'test-client',
@@ -226,9 +279,17 @@ describe('Authorization Endpoint', () => {
     })
 
     test('should store authorization code with correct data', async () => {
+      const { token: csrfToken, cookies } = await getCsrfTokenAndCookies({
+        client_id: 'test-client',
+        redirect_uri: 'http://localhost:3000/callback',
+        response_type: 'code'
+      })
+
       const res = await request(app)
         .post('/authorize')
+        .set('Cookie', cookies)
         .send({
+          _csrf: csrfToken,
           username: 'testuser',
           password: 'testpass',
           client_id: 'test-client',
@@ -247,11 +308,19 @@ describe('Authorization Endpoint', () => {
     })
 
     test('should create short-lived authorization code', async () => {
+      const { token: csrfToken, cookies } = await getCsrfTokenAndCookies({
+        client_id: 'test-client',
+        redirect_uri: 'http://localhost:3000/callback',
+        response_type: 'code'
+      })
+
       const before = Date.now()
 
       await request(app)
         .post('/authorize')
+        .set('Cookie', cookies)
         .send({
+          _csrf: csrfToken,
           username: 'testuser',
           password: 'testpass',
           client_id: 'test-client',
@@ -271,9 +340,17 @@ describe('Authorization Endpoint', () => {
     })
 
     test('should support multiple redirect URIs', async () => {
+      const { token: csrfToken, cookies } = await getCsrfTokenAndCookies({
+        client_id: 'test-client',
+        redirect_uri: 'http://localhost:3001/callback',
+        response_type: 'code'
+      })
+
       const res = await request(app)
         .post('/authorize')
+        .set('Cookie', cookies)
         .send({
+          _csrf: csrfToken,
           username: 'testuser',
           password: 'testpass',
           client_id: 'test-client',
@@ -285,9 +362,17 @@ describe('Authorization Endpoint', () => {
     })
 
     test('should reject invalid client on POST', async () => {
+      const { token: csrfToken, cookies } = await getCsrfTokenAndCookies({
+        client_id: 'test-client',
+        redirect_uri: 'http://localhost:3000/callback',
+        response_type: 'code'
+      })
+
       const res = await request(app)
         .post('/authorize')
+        .set('Cookie', cookies)
         .send({
+          _csrf: csrfToken,
           username: 'testuser',
           password: 'testpass',
           client_id: 'invalid-client',
@@ -299,9 +384,17 @@ describe('Authorization Endpoint', () => {
     })
 
     test('should reject invalid redirect_uri on POST', async () => {
+      const { token: csrfToken, cookies } = await getCsrfTokenAndCookies({
+        client_id: 'test-client',
+        redirect_uri: 'http://localhost:3000/callback',
+        response_type: 'code'
+      })
+
       const res = await request(app)
         .post('/authorize')
+        .set('Cookie', cookies)
         .send({
+          _csrf: csrfToken,
           username: 'testuser',
           password: 'testpass',
           client_id: 'test-client',

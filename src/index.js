@@ -117,15 +117,6 @@ app.use(session({
   }
 }))
 
-// CSRF protection (only for HTML forms, skip API routes)
-app.use((req, res, next) => {
-  // Skip CSRF for API routes (they use Bearer tokens) and health checks
-  if (req.path.startsWith('/token') || req.path.startsWith('/userinfo') || req.path.startsWith('/users') || req.path.startsWith('/.well-known') || req.path.startsWith('/register') || req.path.startsWith('/health')) {
-    return next()
-  }
-  csrf({ cookie: false })(req, res, next)
-})
-
 // Audit logging
 app.use(auditMiddleware)
 
