@@ -42,19 +42,16 @@ public class SecurityConfig {
   @Bean
   public Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter() {
     JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-    converter.setJwtGrantedAuthoritiesConverter(new FlexibleScopeAuthoritiesConverter());
+    converter.setJwtGrantedAuthoritiesConverter(new CognitoScopeAuthoritiesConverter());
     return converter;
   }
 
-  static class FlexibleScopeAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
+  static class CognitoScopeAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
       List<GrantedAuthority> authorities = new ArrayList<>();
       
       Object scopeClaim = jwt.getClaims().get("scope");
-      if (scopeClaim == null) {
-        scopeClaim = jwt.getClaims().get("scp");
-      }
 
       if (scopeClaim instanceof String scopeString) {
         for (String scope : scopeString.split(" ")) {

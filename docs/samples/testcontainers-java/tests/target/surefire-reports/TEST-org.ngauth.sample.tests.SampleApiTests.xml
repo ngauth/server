@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.ngauth.sample.tests.SampleApiTests" time="6.298" tests="4" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.ngauth.sample.tests.SampleApiTests" time="7.655" tests="4" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -13,7 +13,7 @@
     <property name="java.vm.specification.version" value="21"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="/usr/local/sdkman/candidates/java/21.0.7-ms/lib"/>
-    <property name="sun.java.command" value="/workspace/server/docs/samples/testcontainers-java/tests/target/surefire/surefirebooter-20260202050613535_3.jar /workspace/server/docs/samples/testcontainers-java/tests/target/surefire 2026-02-02T05-06-13_450-jvmRun1 surefire-20260202050613535_1tmp surefire_0-20260202050613535_2tmp"/>
+    <property name="sun.java.command" value="/workspace/server/docs/samples/testcontainers-java/tests/target/surefire/surefirebooter-20260202171913171_3.jar /workspace/server/docs/samples/testcontainers-java/tests/target/surefire 2026-02-02T17-19-13_051-jvmRun1 surefire-20260202171913171_1tmp surefire_0-20260202171913171_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/workspace/server/docs/samples/testcontainers-java/tests/target/test-classes:/workspace/server/docs/samples/testcontainers-java/tests/target/classes:/home/codespace/.m2/repository/org/ngauth/samples/sample-api/1.0.0-SNAPSHOT/sample-api-1.0.0-SNAPSHOT.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-starter-web/3.3.6/spring-boot-starter-web-3.3.6.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-starter-json/3.3.6/spring-boot-starter-json-3.3.6.jar:/home/codespace/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.17.3/jackson-datatype-jdk8-2.17.3.jar:/home/codespace/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.17.3/jackson-datatype-jsr310-2.17.3.jar:/home/codespace/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.17.3/jackson-module-parameter-names-2.17.3.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-starter-tomcat/3.3.6/spring-boot-starter-tomcat-3.3.6.jar:/home/codespace/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.33/tomcat-embed-core-10.1.33.jar:/home/codespace/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/10.1.33/tomcat-embed-el-10.1.33.jar:/home/codespace/.m2/repository/org/apache/tomcat/embed/tomcat-embed-websocket/10.1.33/tomcat-embed-websocket-10.1.33.jar:/home/codespace/.m2/repository/org/springframework/spring-web/6.1.15/spring-web-6.1.15.jar:/home/codespace/.m2/repository/org/springframework/spring-beans/6.1.15/spring-beans-6.1.15.jar:/home/codespace/.m2/repository/io/micrometer/micrometer-observation/1.13.8/micrometer-observation-1.13.8.jar:/home/codespace/.m2/repository/io/micrometer/micrometer-commons/1.13.8/micrometer-commons-1.13.8.jar:/home/codespace/.m2/repository/org/springframework/spring-webmvc/6.1.15/spring-webmvc-6.1.15.jar:/home/codespace/.m2/repository/org/springframework/spring-context/6.1.15/spring-context-6.1.15.jar:/home/codespace/.m2/repository/org/springframework/spring-expression/6.1.15/spring-expression-6.1.15.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-starter-security/3.3.6/spring-boot-starter-security-3.3.6.jar:/home/codespace/.m2/repository/org/springframework/spring-aop/6.1.15/spring-aop-6.1.15.jar:/home/codespace/.m2/repository/org/springframework/security/spring-security-config/6.3.5/spring-security-config-6.3.5.jar:/home/codespace/.m2/repository/org/springframework/security/spring-security-web/6.3.5/spring-security-web-6.3.5.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-starter-oauth2-resource-server/3.3.6/spring-boot-starter-oauth2-resource-server-3.3.6.jar:/home/codespace/.m2/repository/org/springframework/security/spring-security-core/6.3.5/spring-security-core-6.3.5.jar:/home/codespace/.m2/repository/org/springframework/security/spring-security-crypto/6.3.5/spring-security-crypto-6.3.5.jar:/home/codespace/.m2/repository/org/springframework/security/spring-security-oauth2-resource-server/6.3.5/spring-security-oauth2-resource-server-6.3.5.jar:/home/codespace/.m2/repository/org/springframework/security/spring-security-oauth2-core/6.3.5/spring-security-oauth2-core-6.3.5.jar:/home/codespace/.m2/repository/org/springframework/security/spring-security-oauth2-jose/6.3.5/spring-security-oauth2-jose-6.3.5.jar:/home/codespace/.m2/repository/com/nimbusds/nimbus-jose-jwt/9.37.3/nimbus-jose-jwt-9.37.3.jar:/home/codespace/.m2/repository/com/github/stephenc/jcip/jcip-annotations/1.0-1/jcip-annotations-1.0-1.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-starter-test/3.3.6/spring-boot-starter-test-3.3.6.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-starter/3.3.6/spring-boot-starter-3.3.6.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot/3.3.6/spring-boot-3.3.6.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/3.3.6/spring-boot-autoconfigure-3.3.6.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-starter-logging/3.3.6/spring-boot-starter-logging-3.3.6.jar:/home/codespace/.m2/repository/ch/qos/logback/logback-classic/1.5.12/logback-classic-1.5.12.jar:/home/codespace/.m2/repository/ch/qos/logback/logback-core/1.5.12/logback-core-1.5.12.jar:/home/codespace/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.23.1/log4j-to-slf4j-2.23.1.jar:/home/codespace/.m2/repository/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar:/home/codespace/.m2/repository/org/slf4j/jul-to-slf4j/2.0.16/jul-to-slf4j-2.0.16.jar:/home/codespace/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar:/home/codespace/.m2/repository/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-test/3.3.6/spring-boot-test-3.3.6.jar:/home/codespace/.m2/repository/org/springframework/boot/spring-boot-test-autoconfigure/3.3.6/spring-boot-test-autoconfigure-3.3.6.jar:/home/codespace/.m2/repository/com/jayway/jsonpath/json-path/2.9.0/json-path-2.9.0.jar:/home/codespace/.m2/repository/jakarta/xml/bind/jakarta.xml.bind-api/4.0.2/jakarta.xml.bind-api-4.0.2.jar:/home/codespace/.m2/repository/jakarta/activation/jakarta.activation-api/2.1.3/jakarta.activation-api-2.1.3.jar:/home/codespace/.m2/repository/net/minidev/json-smart/2.5.1/json-smart-2.5.1.jar:/home/codespace/.m2/repository/net/minidev/accessors-smart/2.5.1/accessors-smart-2.5.1.jar:/home/codespace/.m2/repository/org/ow2/asm/asm/9.6/asm-9.6.jar:/home/codespace/.m2/repository/org/assertj/assertj-core/3.25.3/assertj-core-3.25.3.jar:/home/codespace/.m2/repository/net/bytebuddy/byte-buddy/1.14.19/byte-buddy-1.14.19.jar:/home/codespace/.m2/repository/org/awaitility/awaitility/4.2.2/awaitility-4.2.2.jar:/home/codespace/.m2/repository/org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar:/home/codespace/.m2/repository/org/mockito/mockito-core/5.11.0/mockito-core-5.11.0.jar:/home/codespace/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.19/byte-buddy-agent-1.14.19.jar:/home/codespace/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/home/codespace/.m2/repository/org/mockito/mockito-junit-jupiter/5.11.0/mockito-junit-jupiter-5.11.0.jar:/home/codespace/.m2/repository/org/skyscreamer/jsonassert/1.5.3/jsonassert-1.5.3.jar:/home/codespace/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar:/home/codespace/.m2/repository/org/springframework/spring-core/6.1.15/spring-core-6.1.15.jar:/home/codespace/.m2/repository/org/springframework/spring-jcl/6.1.15/spring-jcl-6.1.15.jar:/home/codespace/.m2/repository/org/springframework/spring-test/6.1.15/spring-test-6.1.15.jar:/home/codespace/.m2/repository/org/xmlunit/xmlunit-core/2.9.1/xmlunit-core-2.9.1.jar:/home/codespace/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.5/junit-jupiter-5.10.5.jar:/home/codespace/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.5/junit-jupiter-api-5.10.5.jar:/home/codespace/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/codespace/.m2/repository/org/junit/platform/junit-platform-commons/1.10.5/junit-platform-commons-1.10.5.jar:/home/codespace/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/codespace/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.5/junit-jupiter-params-5.10.5.jar:/home/codespace/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.5/junit-jupiter-engine-5.10.5.jar:/home/codespace/.m2/repository/org/junit/platform/junit-platform-engine/1.10.5/junit-platform-engine-1.10.5.jar:/home/codespace/.m2/repository/org/testcontainers/testcontainers/1.19.8/testcontainers-1.19.8.jar:/home/codespace/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar:/home/codespace/.m2/repository/org/hamcrest/hamcrest-core/2.2/hamcrest-core-2.2.jar:/home/codespace/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar:/home/codespace/.m2/repository/org/apache/commons/commons-compress/1.24.0/commons-compress-1.24.0.jar:/home/codespace/.m2/repository/org/rnorth/duct-tape/duct-tape/1.0.8/duct-tape-1.0.8.jar:/home/codespace/.m2/repository/org/jetbrains/annotations/17.0.0/annotations-17.0.0.jar:/home/codespace/.m2/repository/com/github/docker-java/docker-java-api/3.3.6/docker-java-api-3.3.6.jar:/home/codespace/.m2/repository/com/github/docker-java/docker-java-transport-zerodep/3.3.6/docker-java-transport-zerodep-3.3.6.jar:/home/codespace/.m2/repository/com/github/docker-java/docker-java-transport/3.3.6/docker-java-transport-3.3.6.jar:/home/codespace/.m2/repository/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar:/home/codespace/.m2/repository/org/testcontainers/junit-jupiter/1.19.8/junit-jupiter-1.19.8.jar:/home/codespace/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.17.3/jackson-databind-2.17.3.jar:/home/codespace/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.17.3/jackson-annotations-2.17.3.jar:/home/codespace/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.17.3/jackson-core-2.17.3.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="FILE_LOG_CHARSET" value="UTF-8"/>
     <property name="java.awt.headless" value="true"/>
-    <property name="surefire.real.class.path" value="/workspace/server/docs/samples/testcontainers-java/tests/target/surefire/surefirebooter-20260202050613535_3.jar"/>
+    <property name="surefire.real.class.path" value="/workspace/server/docs/samples/testcontainers-java/tests/target/surefire/surefirebooter-20260202171913171_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="21.0.7+6-LTS"/>
     <property name="user.name" value="codespace"/>
@@ -44,14 +44,14 @@
     <property name="localRepository" value="/home/codespace/.m2/repository"/>
     <property name="java.vendor.url.bug" value="https://github.com/microsoft/openjdk/issues"/>
     <property name="java.io.tmpdir" value="/tmp"/>
-    <property name="catalina.home" value="/tmp/tomcat.0.14434382046885203969"/>
+    <property name="catalina.home" value="/tmp/tomcat.0.108497769342959666"/>
     <property name="java.version" value="21.0.7"/>
     <property name="user.dir" value="/workspace/server/docs/samples/testcontainers-java/tests"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="PID" value="87576"/>
+    <property name="PID" value="225295"/>
     <property name="CONSOLE_LOG_CHARSET" value="UTF-8"/>
-    <property name="catalina.base" value="/tmp/tomcat.0.14434382046885203969"/>
+    <property name="catalina.base" value="/tmp/tomcat.0.108497769342959666"/>
     <property name="native.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib"/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
@@ -61,9 +61,9 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="writeEndpoint_shouldReturn401_withoutWriteScope" classname="org.ngauth.sample.tests.SampleApiTests" time="0.848">
-    <system-out><![CDATA[05:06:14.339 [main] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
-05:06:14.344 [main] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+  <testcase name="writeEndpoint_shouldReturn401_withoutWriteScope" classname="org.ngauth.sample.tests.SampleApiTests" time="0.937">
+    <system-out><![CDATA[17:19:14.247 [main] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+17:19:14.252 [main] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -74,35 +74,35 @@
 
  :: Spring Boot ::                (v3.3.6)
 
-2026-02-02T05:06:14.944Z  INFO 87576 --- [           main] org.ngauth.sample.tests.SampleApiTests   : Starting SampleApiTests using Java 21.0.7 with PID 87576 (started by codespace in /workspace/server/docs/samples/testcontainers-java/tests)
-2026-02-02T05:06:14.949Z  INFO 87576 --- [           main] org.ngauth.sample.tests.SampleApiTests   : No active profile set, falling back to 1 default profile: "default"
-2026-02-02T05:06:15.849Z  INFO 87576 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 0 (http)
-2026-02-02T05:06:15.863Z  INFO 87576 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-02-02T05:06:15.863Z  INFO 87576 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.33]
-2026-02-02T05:06:15.905Z  INFO 87576 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-02-02T05:06:15.907Z  INFO 87576 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 938 ms
-2026-02-02T05:06:16.402Z  INFO 87576 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring TestDispatcherServlet ''
-2026-02-02T05:06:16.403Z  INFO 87576 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-02-02T05:06:16.404Z  INFO 87576 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
-2026-02-02T05:06:16.459Z  INFO 87576 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 38603 (http) with context path '/'
-2026-02-02T05:06:16.470Z  INFO 87576 --- [           main] org.ngauth.sample.tests.SampleApiTests   : Started SampleApiTests in 1.882 seconds (process running for 2.88)
-2026-02-02T05:06:16.643Z  INFO 87576 --- [           main] o.t.d.DockerClientProviderStrategy       : Loaded org.testcontainers.dockerclient.UnixSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
-2026-02-02T05:06:16.896Z  INFO 87576 --- [           main] o.t.d.DockerClientProviderStrategy       : Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
-2026-02-02T05:06:16.912Z  INFO 87576 --- [           main] org.testcontainers.DockerClientFactory   : Docker host IP address is 172.18.0.1
-2026-02-02T05:06:16.931Z  INFO 87576 --- [           main] org.testcontainers.DockerClientFactory   : Connected to docker: 
+2026-02-02T17:19:14.974Z  INFO 225295 --- [           main] org.ngauth.sample.tests.SampleApiTests   : Starting SampleApiTests using Java 21.0.7 with PID 225295 (started by codespace in /workspace/server/docs/samples/testcontainers-java/tests)
+2026-02-02T17:19:14.976Z  INFO 225295 --- [           main] org.ngauth.sample.tests.SampleApiTests   : No active profile set, falling back to 1 default profile: "default"
+2026-02-02T17:19:15.991Z  INFO 225295 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 0 (http)
+2026-02-02T17:19:16.007Z  INFO 225295 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-02T17:19:16.008Z  INFO 225295 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.33]
+2026-02-02T17:19:16.060Z  INFO 225295 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-02-02T17:19:16.062Z  INFO 225295 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1056 ms
+2026-02-02T17:19:16.659Z  INFO 225295 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring TestDispatcherServlet ''
+2026-02-02T17:19:16.660Z  INFO 225295 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-02-02T17:19:16.661Z  INFO 225295 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-02-02T17:19:16.720Z  INFO 225295 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 46711 (http) with context path '/'
+2026-02-02T17:19:16.729Z  INFO 225295 --- [           main] org.ngauth.sample.tests.SampleApiTests   : Started SampleApiTests in 2.14 seconds (process running for 3.483)
+2026-02-02T17:19:16.932Z  INFO 225295 --- [           main] o.t.d.DockerClientProviderStrategy       : Loaded org.testcontainers.dockerclient.UnixSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+2026-02-02T17:19:17.333Z  INFO 225295 --- [           main] o.t.d.DockerClientProviderStrategy       : Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
+2026-02-02T17:19:17.358Z  INFO 225295 --- [           main] org.testcontainers.DockerClientFactory   : Docker host IP address is 172.18.0.1
+2026-02-02T17:19:17.378Z  INFO 225295 --- [           main] org.testcontainers.DockerClientFactory   : Connected to docker: 
   Server Version: 28.1.1-1
   API Version: 1.49
   Operating System: Ubuntu 20.04.6 LTS (containerized)
   Total Memory: 6863 MB
-2026-02-02T05:06:16.957Z  INFO 87576 --- [           main] tc.testcontainers/ryuk:0.7.0             : Creating container for image: testcontainers/ryuk:0.7.0
-2026-02-02T05:06:17.201Z  INFO 87576 --- [           main] tc.testcontainers/ryuk:0.7.0             : Container testcontainers/ryuk:0.7.0 is starting: c6ff70d0a47e8f55f1142d59bbeea914ff7a033ca7086f94bdf3b0264b4369b7
-2026-02-02T05:06:17.551Z  INFO 87576 --- [           main] tc.testcontainers/ryuk:0.7.0             : Container testcontainers/ryuk:0.7.0 started in PT0.593834809S
-2026-02-02T05:06:17.557Z  INFO 87576 --- [           main] o.t.utility.RyukResourceReaper           : Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
-2026-02-02T05:06:17.557Z  INFO 87576 --- [           main] org.testcontainers.DockerClientFactory   : Checking the system...
-2026-02-02T05:06:17.557Z  INFO 87576 --- [           main] org.testcontainers.DockerClientFactory   : ✔︎ Docker server version should be at least 1.6.0
-2026-02-02T05:06:17.558Z  INFO 87576 --- [           main] tc.ngauth/server:1.0.0-alpha             : Creating container for image: ngauth/server:1.0.0-alpha
-2026-02-02T05:06:17.596Z  INFO 87576 --- [           main] tc.ngauth/server:1.0.0-alpha             : Container ngauth/server:1.0.0-alpha is starting: 5fbc3e59d67416765dea79bd6a58a6adf454dc73a30b2b3b4b34a41c857608ce
-2026-02-02T05:06:17.865Z  WARN 87576 --- [           main] o.t.c.wait.strategy.HttpWaitStrategy     : Unexpected error occurred - will proceed to try to wait anyway
+2026-02-02T17:19:17.428Z  INFO 225295 --- [           main] tc.testcontainers/ryuk:0.7.0             : Creating container for image: testcontainers/ryuk:0.7.0
+2026-02-02T17:19:17.821Z  INFO 225295 --- [           main] tc.testcontainers/ryuk:0.7.0             : Container testcontainers/ryuk:0.7.0 is starting: 3a6164ad6fa5509b54be05a94c5ecc6bdc616425d1c10686eb13a171170f1b3c
+2026-02-02T17:19:18.387Z  INFO 225295 --- [           main] tc.testcontainers/ryuk:0.7.0             : Container testcontainers/ryuk:0.7.0 started in PT0.959126497S
+2026-02-02T17:19:18.394Z  INFO 225295 --- [           main] o.t.utility.RyukResourceReaper           : Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+2026-02-02T17:19:18.394Z  INFO 225295 --- [           main] org.testcontainers.DockerClientFactory   : Checking the system...
+2026-02-02T17:19:18.394Z  INFO 225295 --- [           main] org.testcontainers.DockerClientFactory   : ✔︎ Docker server version should be at least 1.6.0
+2026-02-02T17:19:18.395Z  INFO 225295 --- [           main] tc.ngauth/server:1.0.0-alpha             : Creating container for image: ngauth/server:1.0.0-alpha
+2026-02-02T17:19:18.450Z  INFO 225295 --- [           main] tc.ngauth/server:1.0.0-alpha             : Container ngauth/server:1.0.0-alpha is starting: 9a55eaae7d5fae5d52c2f32aeacc4a3ed1dfc7fd6dd2a76fe4b6f317e7122dda
+2026-02-02T17:19:18.735Z  WARN 225295 --- [           main] o.t.c.wait.strategy.HttpWaitStrategy     : Unexpected error occurred - will proceed to try to wait anyway
 
 java.lang.IllegalStateException: Target port 3000 is not exposed
 	at org.testcontainers.containers.wait.strategy.HttpWaitStrategy.lambda$waitUntilReady$2(HttpWaitStrategy.java:236) ~[testcontainers-1.19.8.jar:1.19.8]
@@ -175,7 +175,7 @@ java.lang.IllegalStateException: Target port 3000 is not exposed
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507) ~[surefire-booter-3.2.5.jar:3.2.5]
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495) ~[surefire-booter-3.2.5.jar:3.2.5]
 
-2026-02-02T05:06:18.891Z  INFO 87576 --- [           main] tc.ngauth/server:1.0.0-alpha             : Container ngauth/server:1.0.0-alpha started in PT1.332933032S
+2026-02-02T17:19:19.774Z  INFO 225295 --- [           main] tc.ngauth/server:1.0.0-alpha             : Container ngauth/server:1.0.0-alpha started in PT1.379064461S
 ]]></system-out>
     <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (/home/codespace/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.19/byte-buddy-agent-1.14.19.jar)
 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
@@ -183,7 +183,7 @@ WARNING: If a serviceability tool is not in use, please run with -Djdk.instrumen
 WARNING: Dynamic loading of agents will be disallowed by default in a future release
 ]]></system-err>
   </testcase>
-  <testcase name="scopeProtectedEndpoint_shouldReturn401_withoutRequiredScope" classname="org.ngauth.sample.tests.SampleApiTests" time="0.031"/>
-  <testcase name="protectedEndpoint_shouldReturn401_withoutToken" classname="org.ngauth.sample.tests.SampleApiTests" time="0.01"/>
-  <testcase name="publicEndpoint_shouldReturn200_withoutAuthentication" classname="org.ngauth.sample.tests.SampleApiTests" time="0.046"/>
+  <testcase name="scopeProtectedEndpoint_shouldReturn401_withoutRequiredScope" classname="org.ngauth.sample.tests.SampleApiTests" time="0.046"/>
+  <testcase name="protectedEndpoint_shouldReturn401_withoutToken" classname="org.ngauth.sample.tests.SampleApiTests" time="0.013"/>
+  <testcase name="publicEndpoint_shouldReturn200_withoutAuthentication" classname="org.ngauth.sample.tests.SampleApiTests" time="0.052"/>
 </testsuite>

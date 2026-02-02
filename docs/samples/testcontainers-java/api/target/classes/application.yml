@@ -1,9 +1,0 @@
-server:
-  port: 8081
-
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: "${NGAUTH_ISSUER:http://localhost:3000}"
