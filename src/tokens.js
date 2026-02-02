@@ -78,18 +78,26 @@ function getPublicKeyPem () {
 }
 
 function generateToken (payload, expiresIn = '1h') {
+  const kid = crypto.createHash('sha256').update(publicKey).digest('hex').substring(0, 16)
   return jwt.sign(payload, privateKey, {
     algorithm: 'RS256',
-    expiresIn
+    expiresIn,
+    header: {
+      kid
+    }
   })
 }
 
 function generateIdToken (claims, expiresIn = '1h') {
   // ID tokens must include these required OIDC claims
   // iss, sub, aud, exp, iat are added by generateToken via expiresIn
+  const kid = crypto.createHash('sha256').update(publicKey).digest('hex').substring(0, 16)
   return jwt.sign(claims, privateKey, {
     algorithm: 'RS256',
-    expiresIn
+    expiresIn,
+    header: {
+      kid
+    }
   })
 }
 

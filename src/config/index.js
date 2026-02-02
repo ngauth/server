@@ -1,36 +1,36 @@
 /**
  * Configuration Loader
- * 
+ *
  * Loads configuration from environment variables with preset support.
  */
 
-const { PRESETS } = require('./presets');
+const { PRESETS } = require('./presets')
 
-function parseBoolean(value, defaultValue = false) {
-  if (value === undefined || value === null) return defaultValue;
-  return value === 'true' || value === '1' || value === 'yes';
+function parseBoolean (value, defaultValue = false) {
+  if (value === undefined || value === null) return defaultValue
+  return value === 'true' || value === '1' || value === 'yes'
 }
 
-function loadConfig() {
-  const preset = process.env.NGAUTH_PRESET || 'custom';
-  
+function loadConfig () {
+  const preset = process.env.NGAUTH_PRESET || 'custom'
+
   if (preset !== 'custom' && !PRESETS[preset]) {
-    console.warn(`⚠️  Unknown preset: ${preset}. Available presets: ${Object.keys(PRESETS).join(', ')}`);
-    console.warn(`⚠️  Falling back to 'custom' configuration.`);
-    return loadCustomConfig();
+    console.warn(`⚠️  Unknown preset: ${preset}. Available presets: ${Object.keys(PRESETS).join(', ')}`)
+    console.warn('⚠️  Falling back to \'custom\' configuration.')
+    return loadCustomConfig()
   }
 
   if (preset === 'custom') {
-    console.log('📝 Using custom configuration');
-    return loadCustomConfig();
+    console.log('📝 Using custom configuration')
+    return loadCustomConfig()
   }
 
-  const presetConfig = PRESETS[preset];
-  console.log(`🎭 Using preset: ${presetConfig.name}`);
+  const presetConfig = PRESETS[preset]
+  console.log(`🎭 Using preset: ${presetConfig.name}`)
 
   // Merge preset with any environment variable overrides
   const config = {
-    preset: preset,
+    preset,
     name: presetConfig.name,
     port: parseInt(process.env.PORT || '3000'),
     issuer: process.env.NGAUTH_ISSUER || `http://localhost:${process.env.PORT || '3000'}`,
@@ -54,16 +54,16 @@ function loadConfig() {
       permissionsClaimName: process.env.NGAUTH_PERMISSIONS_CLAIM_NAME || presetConfig.claims.permissionsClaimName,
       permissionsFormat: presetConfig.claims.permissionsFormat || 'array',
       requireNamespacedClaims: parseBoolean(
-        process.env.NGAUTH_REQUIRE_NAMESPACED_CLAIMS, 
+        process.env.NGAUTH_REQUIRE_NAMESPACED_CLAIMS,
         presetConfig.claims.requireNamespacedClaims
       ),
       namespacePrefix: process.env.NGAUTH_NAMESPACE_PREFIX || presetConfig.claims.namespacePrefix || '',
       useRealmAccess: parseBoolean(
-        process.env.NGAUTH_USE_REALM_ACCESS, 
+        process.env.NGAUTH_USE_REALM_ACCESS,
         presetConfig.claims.useRealmAccess
       ),
       useResourceAccess: parseBoolean(
-        process.env.NGAUTH_USE_RESOURCE_ACCESS, 
+        process.env.NGAUTH_USE_RESOURCE_ACCESS,
         presetConfig.claims.useResourceAccess
       ),
       cognitoPrefix: presetConfig.claims.cognitoPrefix || ''
@@ -83,26 +83,26 @@ function loadConfig() {
     features: {
       pkce: parseBoolean(process.env.NGAUTH_SUPPORT_PKCE, presetConfig.features.pkce),
       refreshTokens: parseBoolean(
-        process.env.NGAUTH_SUPPORT_REFRESH_TOKENS, 
+        process.env.NGAUTH_SUPPORT_REFRESH_TOKENS,
         presetConfig.features.refreshTokens
       ),
       offlineAccess: parseBoolean(
-        process.env.NGAUTH_SUPPORT_OFFLINE_ACCESS, 
+        process.env.NGAUTH_SUPPORT_OFFLINE_ACCESS,
         presetConfig.features.offlineAccess
       )
     }
-  };
+  }
 
-  return config;
+  return config
 }
 
-function loadCustomConfig() {
-  const port = parseInt(process.env.PORT || '3000');
-  
+function loadCustomConfig () {
+  const port = parseInt(process.env.PORT || '3000')
+
   return {
     preset: 'custom',
     name: 'Custom Configuration',
-    port: port,
+    port,
     issuer: process.env.NGAUTH_ISSUER || `http://localhost:${port}`,
     endpoints: {
       authorize: process.env.NGAUTH_AUTHORIZE_PATH || '/authorize',
@@ -140,10 +140,10 @@ function loadCustomConfig() {
       refreshTokens: parseBoolean(process.env.NGAUTH_SUPPORT_REFRESH_TOKENS, true),
       offlineAccess: parseBoolean(process.env.NGAUTH_SUPPORT_OFFLINE_ACCESS, true)
     }
-  };
+  }
 }
 
 // Load and export configuration
-const config = loadConfig();
+const config = loadConfig()
 
-module.exports = config;
+module.exports = config

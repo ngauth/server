@@ -1,5 +1,6 @@
 /* eslint camelcase: "off" */
 const express = require('express')
+const config = require('../config')
 const { getClient, getCode, deleteCode, cleanupExpiredCodes, getUserById } = require('../db')
 const { generateToken, generateIdToken } = require('../tokens')
 const { buildIdTokenClaims } = require('../oidc')
@@ -135,7 +136,7 @@ function handleClientCredentialsGrant (req, res, next, client, scope) {
     const allowedScopes = client.scope.split(' ').filter(s => s)
     // Allow standard OIDC scopes even if not in client registration
     const standardScopes = ['openid', 'profile', 'email', 'offline_access']
-    
+
     for (const requestedScope of requestedScopes) {
       if (!standardScopes.includes(requestedScope) && !allowedScopes.includes(requestedScope)) {
         return next(new OAuthError('invalid_scope', `Scope '${requestedScope}' not registered for this client`))
@@ -145,6 +146,7 @@ function handleClientCredentialsGrant (req, res, next, client, scope) {
 
   // Generate access token for client
   const payload = {
+    iss: config.issuer,
     sub: client.client_id,
     client_id: client.client_id,
     scope: scope || '',
