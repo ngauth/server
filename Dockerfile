@@ -1,5 +1,16 @@
 FROM node:24-alpine
 
+# OCI Labels for better metadata and discoverability
+LABEL org.opencontainers.image.title="ngauth"
+LABEL org.opencontainers.image.description="Lightweight OAuth 2.0 & OpenID Connect server for integration testing"
+LABEL org.opencontainers.image.url="https://github.com/ngauth/server"
+LABEL org.opencontainers.image.source="https://github.com/ngauth/server"
+LABEL org.opencontainers.image.version="1.0.0"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.vendor="ngauth"
+LABEL org.opencontainers.image.authors="ngauth contributors"
+LABEL org.opencontainers.image.documentation="https://github.com/ngauth/server#readme"
+
 # Install security updates
 RUN apk upgrade --no-cache
 
