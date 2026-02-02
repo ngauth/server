@@ -1,0 +1,24 @@
+-------------------------------------------------------------------------------
+Test set: com.ngauth.sample.tests.OAuthFlowsTests
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 1, Errors: 1, Skipped: 0, Time elapsed: 4.246 s <<< FAILURE! -- in com.ngauth.sample.tests.OAuthFlowsTests
+com.ngauth.sample.tests.OAuthFlowsTests.authorizationCodeFlow -- Time elapsed: 0.087 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <302> but was: <500>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
+	at com.ngauth.sample.tests.OAuthFlowsTests.authorizationCodeFlow(OAuthFlowsTests.java:133)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+com.ngauth.sample.tests.OAuthFlowsTests.jwksTokenVerification -- Time elapsed: 0.079 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.nimbusds.jose.jwk.RSAKey.toRSAPublicKey()" because "rsaKey" is null
+	at com.ngauth.sample.tests.OAuthFlowsTests.jwksTokenVerification(OAuthFlowsTests.java:176)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
