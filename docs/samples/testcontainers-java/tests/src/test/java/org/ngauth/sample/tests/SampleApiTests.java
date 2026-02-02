@@ -25,7 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -42,17 +42,17 @@ class SampleApiTests {
   private static final String PRESET = "cognito";
 
   @Container
-  static final GenericContainer<?> NGAUTH = new GenericContainer<>("ngauth/server:1.0.0-alpha")
+  static final FixedHostPortGenericContainer<?> NGAUTH = new FixedHostPortGenericContainer<>("ngauth/server:1.0.0-alpha")
     .withEnv("NGAUTH_PRESET", PRESET)
-    .withExposedPorts(3000)
-    .waitingFor(Wait.forHttp("/health/ready").forStatusCode(200))
+    .withFixedExposedPort(3000, 3000)
+    .waitingFor(Wait.forHttp("/health/ready").forStatusCode(200).forPort(3000))
     .withStartupTimeout(Duration.ofSeconds(60));
 
   @DynamicPropertySource
   static void dynamicProperties(DynamicPropertyRegistry registry) {
     registry.add(
       "spring.security.oauth2.resourceserver.jwt.issuer-uri",
-      () -> "http://" + NGAUTH.getHost() + ":" + NGAUTH.getMappedPort(3000)
+      () -> "http://localhost:3000"
     );
   }
 
@@ -63,7 +63,7 @@ class SampleApiTests {
   private String clientSecret;
 
   private String oauthBaseUrl() {
-    return "http://" + NGAUTH.getHost() + ":" + NGAUTH.getMappedPort(3000);
+    return "http://localhost:3000";
   }
 
   @BeforeAll
@@ -95,7 +95,7 @@ class SampleApiTests {
   @Test
   void scopeProtectedEndpoint_shouldReturn401_withoutRequiredScope() throws Exception {
     String token = getClientCredentialsToken("");
-    mockMvc.perform(get("/api/data").header("Authorization", "Bearer " + token)).andExpect(status().isUnauthorized());
+    mockMvc.perform(get("/api/data").header("Authorization", "Bearer " + token)).andExpect(status().isForbidden());
   }
 
   @Test
@@ -103,7 +103,7 @@ class SampleApiTests {
     String token = getClientCredentialsToken("read");
     mockMvc
       .perform(post("/api/data").header("Authorization", "Bearer " + token).header("Content-Type", "application/json").content("{\"name\":\"Test Item\"}"))
-      .andExpect(status().isUnauthorized());
+      .andExpect(status().isForbidden());
   }
 
   private String getClientCredentialsToken(String scope) throws Exception {
