@@ -1,6 +1,6 @@
 /**
  * OAuth Provider Presets
- * 
+ *
  * Pre-configured settings that mimic popular OAuth/OIDC providers
  * for realistic integration testing.
  */
@@ -319,6 +319,6 @@ const PRESETS = {
       offlineAccess: true
     }
   }
-};
+}
 
-module.exports = { PRESETS };
+module.exports = { PRESETS }

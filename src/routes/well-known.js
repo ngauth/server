@@ -10,13 +10,13 @@ const router = express.Router()
 async function getAllScopes () {
   const clients = await getClients()
   const clientScopes = new Set(['openid', 'profile', 'email', 'offline_access'])
-  
+
   clients.forEach(client => {
     if (client.scope) {
       client.scope.split(' ').filter(s => s).forEach(scope => clientScopes.add(scope))
     }
   })
-  
+
   return Array.from(clientScopes).sort()
 }
 
@@ -79,7 +79,7 @@ router.get('/openid-configuration', async (req, res) => {
     scopes_supported,
     response_types_supported: ['code', 'token', 'id_token', 'code id_token'],
     response_modes_supported: ['query', 'fragment'],
-    grant_types_supported: config.features.refreshTokens 
+    grant_types_supported: config.features.refreshTokens
       ? ['authorization_code', 'client_credentials', 'refresh_token']
       : ['authorization_code', 'client_credentials'],
     token_endpoint_auth_methods_supported: ['client_secret_basic', 'client_secret_post', 'none'],

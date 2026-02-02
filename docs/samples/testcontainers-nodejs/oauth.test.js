@@ -1,3 +1,4 @@
+/* eslint-env jest */
 const { GenericContainer, Wait } = require('testcontainers')
 const jwt = require('jsonwebtoken')
 const jwksClient = require('jwks-rsa')
@@ -9,7 +10,7 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
   // Start ngauth container before all tests
   beforeAll(async () => {
     console.log('Starting ngauth/server container...')
-    
+
     container = await new GenericContainer('ngauth/server:latest')
       .withExposedPorts(3000)
       .withWaitStrategy(
@@ -39,7 +40,7 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
       expect(response.status).toBe(200)
 
       const metadata = await response.json()
-      
+
       expect(metadata.issuer).toBe(baseUrl)
       expect(metadata.authorization_endpoint).toBe(`${baseUrl}/authorize`)
       expect(metadata.token_endpoint).toBe(`${baseUrl}/token`)
@@ -54,7 +55,7 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
       expect(response.status).toBe(200)
 
       const jwks = await response.json()
-      
+
       expect(jwks.keys).toBeDefined()
       expect(jwks.keys.length).toBeGreaterThan(0)
       expect(jwks.keys[0].kty).toBe('RSA')
@@ -78,7 +79,7 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
       expect(response.status).toBe(201)
 
       const client = await response.json()
-      
+
       expect(client.client_id).toBeDefined()
       expect(client.client_secret).toBeDefined()
       expect(client.client_name).toBe('Test Application')
@@ -120,11 +121,11 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
 
     test('should issue access token via client credentials', async () => {
       const auth = Buffer.from(`${client.client_id}:${client.client_secret}`).toString('base64')
-      
+
       const response = await fetch(`${baseUrl}/token`, {
         method: 'POST',
         headers: {
-          'Authorization': `Basic ${auth}`,
+          Authorization: `Basic ${auth}`,
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: 'grant_type=client_credentials&scope=openid profile'
@@ -133,7 +134,7 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
       expect(response.status).toBe(200)
 
       const tokenData = await response.json()
-      
+
       expect(tokenData.access_token).toBeDefined()
       expect(tokenData.token_type).toBe('Bearer')
       expect(tokenData.expires_in).toBe(3600)
@@ -142,11 +143,11 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
 
     test('should reject invalid client credentials', async () => {
       const auth = Buffer.from(`${client.client_id}:wrong_secret`).toString('base64')
-      
+
       const response = await fetch(`${baseUrl}/token`, {
         method: 'POST',
         headers: {
-          'Authorization': `Basic ${auth}`,
+          Authorization: `Basic ${auth}`,
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: 'grant_type=client_credentials'
@@ -194,7 +195,7 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
       const tokenResponse = await fetch(`${baseUrl}/token`, {
         method: 'POST',
         headers: {
-          'Authorization': `Basic ${auth}`,
+          Authorization: `Basic ${auth}`,
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: 'grant_type=client_credentials&scope=openid'
@@ -204,10 +205,6 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
     })
 
     test('should verify JWT token signature with JWKS', async () => {
-      // Get JWKS
-      const jwksResponse = await fetch(`${baseUrl}/.well-known/jwks.json`)
-      const jwks = await jwksResponse.json()
-
       // Create JWKS client
       const client = jwksClient({
         jwksUri: `${baseUrl}/.well-known/jwks.json`,
@@ -262,7 +259,7 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
 
     test('should render authorization form', async () => {
       const url = `${baseUrl}/authorize?response_type=code&client_id=${client.client_id}&redirect_uri=http://localhost:3001/callback&scope=openid&state=random_state`
-      
+
       const response = await fetch(url)
       expect(response.status).toBe(200)
 
@@ -274,7 +271,7 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
 
     test('should reject invalid redirect_uri', async () => {
       const url = `${baseUrl}/authorize?response_type=code&client_id=${client.client_id}&redirect_uri=http://evil.com/callback&scope=openid&state=state123`
-      
+
       const response = await fetch(url, { redirect: 'manual' })
       expect(response.status).toBe(400)
 
@@ -284,7 +281,7 @@ describe('OAuth 2.0 Integration Tests with ngauth/server', () => {
 
     test('should reject missing client_id', async () => {
       const url = `${baseUrl}/authorize?response_type=code&redirect_uri=http://localhost:3001/callback&scope=openid`
-      
+
       const response = await fetch(url)
       expect(response.status).toBe(400)
 

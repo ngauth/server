@@ -32,7 +32,7 @@ describe('Authorization Endpoint', () => {
       saveUninitialized: false,
       cookie: { secure: false }
     }))
-    
+
     app.use('/authorize', authorizeRouter)
     app.use(errorHandler)
 
@@ -168,7 +168,7 @@ describe('Authorization Endpoint', () => {
       const res = await request(app)
         .get('/authorize')
         .query(query)
-      
+
       const match = res.text.match(/name="_csrf" value="([^"]+)"/)
       const token = match ? match[1] : null
       const cookies = res.headers['set-cookie'] || []
@@ -181,7 +181,7 @@ describe('Authorization Endpoint', () => {
         redirect_uri: 'http://localhost:3000/callback',
         response_type: 'code'
       })
-      
+
       if (!csrfToken) {
         throw new Error('CSRF token extraction failed - token is null')
       }

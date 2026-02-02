@@ -1,7 +1,6 @@
 const express = require('express')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
-const csrf = require('csurf')
 const helmet = require('helmet')
 const crypto = require('crypto')
 const fs = require('fs').promises
@@ -132,30 +131,30 @@ if (process.env.NODE_ENV === 'production') {
 
 // Routes (using preset-configured endpoints)
 // Well-known routes need special handling for nested paths
-const oidcPath = config.endpoints.oidc;
-const jwksPath = config.endpoints.jwks;
+const oidcPath = config.endpoints.oidc
+const jwksPath = config.endpoints.jwks
 
 // Extract base path and route
 if (oidcPath.includes('/.well-known/')) {
-  const basePath = oidcPath.substring(0, oidcPath.indexOf('/.well-known/') + '/.well-known'.length);
-  app.use(basePath, wellKnownRouter);
+  const basePath = oidcPath.substring(0, oidcPath.indexOf('/.well-known/') + '/.well-known'.length)
+  app.use(basePath, wellKnownRouter)
 } else {
-  app.use(oidcPath, wellKnownRouter);
+  app.use(oidcPath, wellKnownRouter)
 }
 
 if (jwksPath.includes('/.well-known/')) {
-  const basePath = jwksPath.substring(0, jwksPath.indexOf('/.well-known/') + '/.well-known'.length);
-  app.use(basePath, jwksRouter);
+  const basePath = jwksPath.substring(0, jwksPath.indexOf('/.well-known/') + '/.well-known'.length)
+  app.use(basePath, jwksRouter)
 } else {
-  app.use(jwksPath, jwksRouter);
+  app.use(jwksPath, jwksRouter)
 }
 
-app.use(config.endpoints.authorize, loginLimiter, authorizeRouter);
-app.use(config.endpoints.token, loginLimiter, tokenRouter);
+app.use(config.endpoints.authorize, loginLimiter, authorizeRouter)
+app.use(config.endpoints.token, loginLimiter, tokenRouter)
 if (config.endpoints.userinfo) {
-  app.use(config.endpoints.userinfo, userinfoRouter);
+  app.use(config.endpoints.userinfo, userinfoRouter)
 }
-app.use('/register', registerLimiter, registerRouter);
+app.use('/register', registerLimiter, registerRouter)
 app.use('/users', usersRouter)
 
 // Error handler
