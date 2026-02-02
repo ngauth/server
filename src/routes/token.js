@@ -1,5 +1,6 @@
 /* eslint camelcase: "off" */
 const express = require('express')
+const config = require('../config')
 const { getClient, getCode, deleteCode, cleanupExpiredCodes, getUserById } = require('../db')
 const { generateToken, generateIdToken } = require('../tokens')
 const { buildIdTokenClaims } = require('../oidc')
@@ -145,6 +146,7 @@ function handleClientCredentialsGrant (req, res, next, client, scope) {
 
   // Generate access token for client
   const payload = {
+    iss: config.issuer,
     sub: client.client_id,
     client_id: client.client_id,
     scope: scope || '',
