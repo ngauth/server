@@ -49,7 +49,8 @@ public class SecurityConfig {
   static class FlexibleScopeAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
-      List<String> scopes = new ArrayList<>();
+      List<GrantedAuthority> authorities = new ArrayList<>();
+      
       Object scopeClaim = jwt.getClaims().get("scope");
       if (scopeClaim == null) {
         scopeClaim = jwt.getClaims().get("scp");
@@ -58,7 +59,7 @@ public class SecurityConfig {
       if (scopeClaim instanceof String scopeString) {
         for (String scope : scopeString.split(" ")) {
           if (!scope.isBlank()) {
-            scopes.add(scope);
+            authorities.add(new SimpleGrantedAuthority("SCOPE_" + scope));
           }
         }
       } else if (scopeClaim instanceof Collection<?> scopeList) {
@@ -66,15 +67,13 @@ public class SecurityConfig {
           if (scope != null) {
             String value = scope.toString().trim();
             if (!value.isBlank()) {
-              scopes.add(value);
+              authorities.add(new SimpleGrantedAuthority("SCOPE_" + value));
             }
           }
         }
       }
 
-      return scopes.stream()
-        .map(scope -> new SimpleGrantedAuthority("SCOPE_" + scope))
-        .toList();
+      return authorities;
     }
   }
 }

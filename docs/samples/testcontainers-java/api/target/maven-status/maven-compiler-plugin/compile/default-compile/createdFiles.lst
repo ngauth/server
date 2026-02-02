@@ -1,0 +1,5 @@
+org/ngauth/sample/api/controller/SampleController$DataItem.class
+org/ngauth/sample/api/config/SecurityConfig$FlexibleScopeAuthoritiesConverter.class
+org/ngauth/sample/api/SampleApiApplication.class
+org/ngauth/sample/api/config/SecurityConfig.class
+org/ngauth/sample/api/controller/SampleController.class
