@@ -174,6 +174,9 @@ docker run -e NGAUTH_PRESET=okta -p 3000:3000 ngauth/server
 # Mimic Azure AD B2C
 docker run -e NGAUTH_PRESET=azureb2c -p 3000:3000 ngauth/server
 
+# Mimic Microsoft Entra ID
+docker run -e NGAUTH_PRESET=entraid -p 3000:3000 ngauth/server
+
 # Mimic Keycloak
 docker run -e NGAUTH_PRESET=keycloak -p 3000:3000 ngauth/server
 
@@ -200,6 +203,7 @@ Each preset automatically sets up:
 | **auth0** | `scope` | String | `permissions` array | Namespaced claims |
 | **okta** | `scp` | Array | `groups` array | No separate roles |
 | **azureb2c** | `scp` | String | `roles` array | Azure-style GUIDs |
+| **entraid** | `scp` | String | `roles`/`groups` array | Microsoft identity platform v2.0 |
 | **keycloak** | `scope` | String | `realm_access.roles` | Hierarchical roles |
 | **identityserver** | `scope` | String | `role` array | Clean claim names |
 | **google** | `scope` | String | None | Minimal claims |

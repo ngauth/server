@@ -128,6 +128,21 @@ async function handleAuthorizationCodeGrant (req, res, next, client, code, redir
 }
 
 function handleClientCredentialsGrant (req, res, next, client, scope) {
+  // Validate scope - check if requested scopes are allowed by client registration
+  // Only validate if client has specific scopes registered
+  if (scope && client.scope && client.scope.trim()) {
+    const requestedScopes = scope.split(' ').filter(s => s)
+    const allowedScopes = client.scope.split(' ').filter(s => s)
+    // Allow standard OIDC scopes even if not in client registration
+    const standardScopes = ['openid', 'profile', 'email', 'offline_access']
+    
+    for (const requestedScope of requestedScopes) {
+      if (!standardScopes.includes(requestedScope) && !allowedScopes.includes(requestedScope)) {
+        return next(new OAuthError('invalid_scope', `Scope '${requestedScope}' not registered for this client`))
+      }
+    }
+  }
+
   // Generate access token for client
   const payload = {
     sub: client.client_id,

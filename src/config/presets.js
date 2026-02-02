@@ -249,6 +249,41 @@ const PRESETS = {
     }
   },
 
+  entraid: {
+    name: 'Microsoft Entra ID',
+    endpoints: {
+      authorize: '/oauth2/v2.0/authorize',
+      token: '/oauth2/v2.0/token',
+      jwks: '/discovery/v2.0/keys',
+      oidc: '/v2.0/.well-known/openid-configuration',
+      userinfo: '/oidc/userinfo',
+      introspect: null,
+      revoke: null,
+      logout: '/oauth2/v2.0/logout'
+    },
+    claims: {
+      scopeClaimName: 'scp',
+      scopeFormat: 'string',
+      rolesClaimName: 'roles',
+      rolesFormat: 'array',
+      groupsClaimName: 'groups',
+      groupsFormat: 'array',
+      permissionsClaimName: null,
+      requireNamespacedClaims: false
+    },
+    tokens: {
+      accessTokenTTL: 3600,
+      idTokenTTL: 3600,
+      refreshTokenTTL: 86400,
+      signingAlgorithm: 'RS256'
+    },
+    features: {
+      pkce: true,
+      refreshTokens: true,
+      offlineAccess: true
+    }
+  },
+
   custom: {
     name: 'Custom Configuration',
     endpoints: {

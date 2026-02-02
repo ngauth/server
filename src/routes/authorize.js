@@ -66,6 +66,21 @@ router.get('/', async (req, res, next) => {
       return next(new OAuthError('invalid_request', 'Invalid redirect_uri'))
     }
 
+    // Validate scope - check if requested scopes are allowed by client registration
+    // Only validate if client has specific scopes registered
+    if (scope && client.scope && client.scope.trim()) {
+      const requestedScopes = scope.split(' ').filter(s => s)
+      const allowedScopes = client.scope.split(' ').filter(s => s)
+      // Allow standard OIDC scopes even if not in client registration
+      const standardScopes = ['openid', 'profile', 'email', 'offline_access']
+      
+      for (const requestedScope of requestedScopes) {
+        if (!standardScopes.includes(requestedScope) && !allowedScopes.includes(requestedScope)) {
+          return next(new OAuthError('invalid_scope', `Scope '${requestedScope}' not registered for this client`))
+        }
+      }
+    }
+
     // Check if user is authenticated
     if (!req.session.userId) {
       // Show login form
@@ -118,6 +133,21 @@ router.post('/', async (req, res, next) => {
     // Validate redirect_uri
     if (!client.redirect_uris.includes(redirect_uri)) {
       return next(new OAuthError('invalid_request', 'Invalid redirect_uri'))
+    }
+
+    // Validate scope - check if requested scopes are allowed by client registration
+    // Only validate if client has specific scopes registered
+    if (scope && client.scope && client.scope.trim()) {
+      const requestedScopes = scope.split(' ').filter(s => s)
+      const allowedScopes = client.scope.split(' ').filter(s => s)
+      // Allow standard OIDC scopes even if not in client registration
+      const standardScopes = ['openid', 'profile', 'email', 'offline_access']
+      
+      for (const requestedScope of requestedScopes) {
+        if (!standardScopes.includes(requestedScope) && !allowedScopes.includes(requestedScope)) {
+          return res.send(loginForm(client_id, redirect_uri, scope, state, nonce, `Scope '${requestedScope}' not registered for this client`))
+        }
+      }
     }
 
     // Authenticate user
