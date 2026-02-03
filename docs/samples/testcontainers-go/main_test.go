@@ -27,10 +27,10 @@ var (
 )
 
 type OAuthClient struct {
-	ClientID     string   `json:"clientId"`
-	ClientSecret string   `json:"clientSecret"`
-	ClientName   string   `json:"clientName"`
-	RedirectURIs []string `json:"redirectUris"`
+	ClientID     string   `json:"client_id"`
+	ClientSecret string   `json:"client_secret"`
+	ClientName   string   `json:"client_name"`
+	RedirectURIs []string `json:"redirect_uris"`
 }
 
 type TokenResponse struct {

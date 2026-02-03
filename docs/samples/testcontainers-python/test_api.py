@@ -54,11 +54,11 @@ def oauth_client(ngauth_container):
     Register an OAuth client with appropriate scopes
     """
     response = httpx.post(
-        f"{ngauth_container}/api/register",
+        f"{ngauth_container}/register",
         json={
-            "clientName": "Test Client",
-            "redirectUris": ["http://localhost:8000/callback"],
-            "grantTypes": ["authorization_code", "client_credentials"],
+            "client_name": "Test Client",
+            "redirect_uris": ["http://localhost:8000/callback"],
+            "grant_types": ["authorization_code", "client_credentials"],
             "scope": "openid profile email read write"
         }
     )
@@ -72,11 +72,11 @@ def client_credentials_token(ngauth_container, oauth_client):
     Get access token using client credentials grant
     """
     response = httpx.post(
-        f"{ngauth_container}/oauth/token",
+        f"{ngauth_container}/token",
         data={
             "grant_type": "client_credentials",
-            "client_id": oauth_client["clientId"],
-            "client_secret": oauth_client["clientSecret"],
+            "client_id": oauth_client["client_id"],
+            "client_secret": oauth_client["client_secret"],
             "scope": "read write"
         },
         headers={"Content-Type": "application/x-www-form-urlencoded"}
@@ -197,11 +197,11 @@ def test_data_get_without_scope(ngauth_container, oauth_client, api_container):
     """
     # Get token without read scope
     response = httpx.post(
-        f"{ngauth_container}/oauth/token",
+        f"{ngauth_container}/token",
         data={
             "grant_type": "client_credentials",
-            "client_id": oauth_client["clientId"],
-            "client_secret": oauth_client["clientSecret"],
+            "client_id": oauth_client["client_id"],
+            "client_secret": oauth_client["client_secret"],
             "scope": "write"  # Only write, no read
         },
         headers={"Content-Type": "application/x-www-form-urlencoded"}
