@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2",
-    "jwks-rsa": "^3.1.0"
+    "jwks-rsa": "^3.1.0",
+    "node-fetch": "^2.7.0"
   },
   "jest": {
     "testEnvironment": "node",

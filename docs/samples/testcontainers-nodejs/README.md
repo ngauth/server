@@ -103,6 +103,43 @@ const response = await fetch(`${baseUrl}/register`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
+    client_name: 'My Application',
+    redirect_uris: ['http://localhost:3000/callback'],
+    grant_types: ['authorization_code', 'client_credentials'],
+    scope: 'openid profile email'
+  })
+});
+
+const client = await response.json();
+console.log('Client ID:', client.client_id);
+console.log('Client Secret:', client.client_secret);
+```
+
+### Client Credentials Flow
+
+```javascript
+const params = new URLSearchParams({
+  grant_type: 'client_credentials',
+  client_id: client.client_id,
+  client_secret: client.client_secret,
+  scope: 'read write'
+});
+
+const response = await fetch(`${baseUrl}/token`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: params
+});
+
+const tokenData = await response.json();
+const accessToken = tokenData.access_token;
+```
+
+```javascript
+const response = await fetch(`${baseUrl}/register`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
     client_name: 'Test Client',
     redirect_uris: ['http://localhost:3001/callback']
   })
