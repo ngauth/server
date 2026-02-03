@@ -16,6 +16,10 @@
   
 </div>
 
+> **ngauth** is a fast, lightweight OAuth 2.0 authorization server and OpenID Connect provider designed specifically for **integration testing**, **development**, and **CI/CD pipelines**. Perfect for testing OAuth clients, OIDC flows, and JWT authentication without the overhead of production-grade identity providers like Keycloak or Auth0.
+
+**Keywords**: `oauth testing`, `oauth server`, `oidc testing`, `oauth2 testcontainers`, `oauth integration testing`, `jwt testing`, `oauth mock server`, `oauth development server`, `openid connect testing`, `oauth ci cd`
+
 ---
 
 ## 🚀 Quick Start
