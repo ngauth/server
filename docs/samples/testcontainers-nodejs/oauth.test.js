@@ -11,7 +11,7 @@ describe('OAuth 2.0 Integration Tests with ngauth', () => {
   beforeAll(async () => {
     console.log('Starting ngauth container...')
     
-    container = await new GenericContainer('aronworks/ngauth:latest')
+    container = await new GenericContainer('ngauth/server:1.0.0')
       .withExposedPorts(3000)
       .withEnvironment({
         NODE_ENV: 'development',

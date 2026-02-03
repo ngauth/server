@@ -58,7 +58,7 @@ func setupContainers(t *testing.T) {
 
 	// Start ngauth OAuth server
 	req := testcontainers.ContainerRequest{
-		Image:        "aronworks/ngauth:latest",
+		Image:        "ngauth/server:1.0.0",
 		ExposedPorts: []string{"3000/tcp"},
 		Env: map[string]string{
 			"NODE_ENV":       "development",

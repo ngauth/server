@@ -42,7 +42,7 @@ class SampleApiTests {
   private static final String PRESET = "cognito";
 
   @Container
-  static final FixedHostPortGenericContainer<?> NGAUTH = new FixedHostPortGenericContainer<>("ngauth/server:1.0.0-alpha")
+  static final FixedHostPortGenericContainer<?> NGAUTH = new FixedHostPortGenericContainer<>("ngauth/server:1.0.0")
     .withEnv("NGAUTH_PRESET", PRESET)
     .withFixedExposedPort(3000, 3000)
     .waitingFor(Wait.forHttp("/health/ready").forStatusCode(200).forPort(3000))

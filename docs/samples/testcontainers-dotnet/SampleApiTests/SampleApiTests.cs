@@ -34,7 +34,7 @@ public class SampleApiFixture : IAsyncLifetime
         
         // Start OAuth container with Entra ID preset
         OAuthContainer = new ContainerBuilder()
-            .WithImage("ngauth/server:1.0.0-alpha")
+            .WithImage("ngauth/server:1.0.0")
             .WithPortBinding(3000, 3000)  // Fixed port binding
             .WithEnvironment("NODE_ENV", "test")
             .WithEnvironment("NGAUTH_PRESET", "entraid")
