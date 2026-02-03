@@ -1,6 +1,6 @@
 {
   "name": "ngauth",
-  "version": "1.0.0-alpha",
+  "version": "1.0.0",
   "description": "Minimalistic OAuth 2.0 server (RFC 6749 & RFC 8414)",
   "main": "src/index.js",
   "scripts": {
@@ -40,7 +40,10 @@
   "standard": {
     "rules": {
       "camelcase": "off"
-    }
+    },
+    "ignore": [
+      "docs/samples/testcontainers-nodejs/"
+    ]
   },
   "jest": {
     "testEnvironment": "node",

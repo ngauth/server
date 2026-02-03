@@ -30,5 +30,12 @@
     "testEnvironment": "node",
     "testTimeout": 60000,
     "verbose": true
+  },
+  "eslintConfig": {
+    "env": {
+      "jest": true,
+      "node": true,
+      "es6": true
+    }
   }
 }
