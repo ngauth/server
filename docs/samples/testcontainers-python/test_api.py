@@ -19,6 +19,7 @@ def ngauth_container():
     container.with_env("SESSION_SECRET", "test-session-secret-min-32-chars!")
     container.with_env("ADMIN_USERNAME", "admin")
     container.with_env("ADMIN_PASSWORD", "admin123")
+    # Note: NGAUTH_ISSUER defaults to http://localhost:3000, which is expected
     
     # Wait for healthcheck
     container.with_command("sh -c 'node src/index.js'")
@@ -35,7 +36,7 @@ def ngauth_container():
     max_retries = 30
     for _ in range(max_retries):
         try:
-            response = httpx.get(f"{base_url}/health", timeout=2.0)
+            response = httpx.get(f"{base_url}/health/live", timeout=2.0)
             if response.status_code == 200:
                 break
         except Exception:
@@ -123,7 +124,7 @@ CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
     max_retries = 20
     for _ in range(max_retries):
         try:
-            response = httpx.get("http://localhost:8000/health", timeout=2.0)
+            response = httpx.get("http://localhost:8000/health/live", timeout=2.0)
             if response.status_code == 200:
                 break
         except Exception:

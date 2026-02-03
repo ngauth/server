@@ -66,8 +66,9 @@ func setupContainers(t *testing.T) {
 			"SESSION_SECRET": "test-session-secret-min-32-chars!",
 			"ADMIN_USERNAME": "admin",
 			"ADMIN_PASSWORD": "admin123",
+			// Note: NGAUTH_ISSUER defaults to http://localhost:3000
 		},
-		WaitingFor: wait.ForHTTP("/health").WithPort("3000/tcp").WithStartupTimeout(60 * time.Second),
+		WaitingFor: wait.ForHTTP("/health/live").WithPort("3000/tcp").WithStartupTimeout(60 * time.Second),
 	}
 
 	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{

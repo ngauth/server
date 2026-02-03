@@ -124,7 +124,7 @@ async def get_userinfo(token_data: Dict[str, Any] = Depends(verify_token)):
 
 
 # Health check
-@app.get("/health")
+@app.get("/health/live")
 async def health():
     """Health check endpoint"""
     return {"status": "healthy"}
